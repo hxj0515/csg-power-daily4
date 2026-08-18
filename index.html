@@ -263,14 +263,16 @@ function renderChart(){
   // 折线
   const line=series.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.cny).toFixed(1)).join(' ');
   svg+=`<path d="${line}" fill="none" stroke="#f0c24b" stroke-width="2.2" stroke-linejoin="round"/>`;
-  // 关键点标注
+  // 日期缩写：2026-01-29 -> 1/29
+  const d8=ds=>{const p=String(ds).split('-');return `${Number(p[1])}/${Number(p[2])}`;};
+  // 关键点标注（带日期）
   const markers=[];
   const peak=series.reduce((m,p)=>p.cny>m.cny?p:m);
   const low=series.reduce((m,p)=>p.cny<m.cny?p:m);
   const last=series[series.length-1];
-  markers.push({p:peak, label:'阶段高 '+peak.cny, color:'#ff5c5c'});
-  markers.push({p:low, label:'阶段低 '+low.cny, color:'#23d18b'});
-  markers.push({p:last, label:'今日 '+last.cny, color:'#36a3ff'});
+  markers.push({p:peak, label:'阶段高 '+peak.cny+' · '+d8(peak.date), color:'#ff5c5c'});
+  markers.push({p:low, label:'阶段低 '+low.cny+' · '+d8(low.date), color:'#23d18b'});
+  markers.push({p:last, label:'今日 '+last.cny+' · '+d8(last.date), color:'#36a3ff'});
   series.forEach((p,i)=>{
     const cx=X(i), cy=Y(p.cny);
     svg+=`<circle cx="${cx}" cy="${cy}" r="${(p===peak||p===low||p===last)?4.5:1.5}" fill="${(p===peak||p===low||p===last)?colorOf.gold:'#5a6c7d'}" stroke="#0c1117" stroke-width="0.8"/>`;
@@ -278,9 +280,25 @@ function renderChart(){
   markers.forEach(m=>{
     const idx=series.indexOf(m.p);
     const cx=X(idx), cy=Y(m.p.cny);
-    svg+=`<text x="${cx+6}" y="${cy-6}" fill="${m.color}" font-size="11" font-weight="700">${m.label}</text>`;
+    const atEnd=idx===series.length-1;
+    const tx=atEnd?cx-6:cx+6;
+    svg+=`<text x="${tx}" y="${cy-6}" fill="${m.color}" font-size="11" font-weight="700" text-anchor="${atEnd?'end':'start'}">${m.label}</text>`;
+    // 节点正下方补日期小字（时间锚点）
+    svg+=`<text x="${cx}" y="${cy+14}" fill="${m.color}" font-size="9" text-anchor="middle" opacity="0.9">${d8(m.p.date)}</text>`;
   });
-  // X 轴首末日期
+  // X 轴月份刻度（每月首个数据点画竖线+月份标签；首月/末月用完整日期替代）
+  const monthSeen={};
+  series.forEach((p,i)=>{
+    const m=String(p.date).slice(0,7);
+    if(monthSeen[m])return;
+    monthSeen[m]=true;
+    const cx=X(i);
+    const isFirst=i===0, isLast=i===series.length-1;
+    if(!isFirst&&!isLast){
+      svg+=`<line x1="${cx}" y1="30" x2="${cx}" y2="228" stroke="#26323f" stroke-width="0.5" opacity="0.3"/>`;
+      svg+=`<text x="${cx}" y="242" fill="#6b7c8d" font-size="9.5" text-anchor="middle">${Number(m.slice(5))}月</text>`;
+    }
+  });
   svg+=`<text x="40" y="245" fill="#6b7c8d" font-size="10">${series[0].date}</text>`;
   svg+=`<text x="660" y="245" fill="#6b7c8d" font-size="10" text-anchor="end">${last.date}</text>`;
   $('priceChart').innerHTML=svg;
