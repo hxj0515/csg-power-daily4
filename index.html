@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>金价监测 · csg-power-daily4</title>
+<style>
+  :root{
+    --bg:#0c1117; --panel:#141c26; --panel2:#1b2531; --line:#26323f;
+    --txt:#e6edf3; --dim:#9fb0c0; --muted:#6b7c8d;
+    --up:#ff5c5c; --down:#23d18b; --warn:#ffb454; --info:#36a3ff;
+    --chip:#1d2a38; --gold:#f0c24b;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65;font-size:15px}
+  a{color:var(--info);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+  header.hero{background:linear-gradient(135deg,#2a240e 0%,#0c1117 55%,#101722 100%);
+    border-bottom:1px solid var(--line);padding:34px 0 26px}
+  .brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
+    background:radial-gradient(circle at 30% 30%,#f0c24b,#8a6d1f);font-size:22px;font-weight:800;color:#2a240e}
+  h1{font-size:26px;margin:0;letter-spacing:.5px}
+  .sub{color:var(--dim);margin-top:6px;font-size:14px}
+  .meta{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+  .pill{background:var(--chip);border:1px solid var(--line);color:var(--dim);
+    padding:5px 12px;border-radius:999px;font-size:12.5px}
+  .pill b{color:var(--gold)}
+  nav.toc{position:sticky;top:0;z-index:20;background:rgba(12,17,23,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 0}
+  nav.toc .wrap{display:flex;gap:8px;flex-wrap:wrap}
+  nav.toc a{color:var(--dim);font-size:13.5px;padding:6px 12px;border-radius:8px;border:1px solid transparent}
+  nav.toc a:hover{background:var(--panel2);color:var(--txt);text-decoration:none}
+  section{padding:30px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:21px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2 .tag{font-size:11px;background:var(--gold);color:#2a240e;padding:2px 8px;border-radius:6px;font-weight:700}
+  .lead{color:var(--dim);margin:0 0 18px;font-size:14px}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:880px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .card h3{margin:0 0 8px;font-size:16px}
+  .card p{margin:6px 0;color:var(--dim);font-size:13.5px}
+  .stat .n{font-size:24px;font-weight:800}
+  .stat .l{font-size:12px;color:var(--muted)}
+  .stat .d{font-size:12.5px;margin-top:2px}
+  .up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)} .info{color:var(--info)} .gold{color:var(--gold)}
+  .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;margin-left:6px;vertical-align:middle}
+  .b-bull{background:#3a1a1a;color:var(--up);border:1px solid #5e2a2a}
+  .b-bear{background:#10361f;color:var(--down);border:1px solid #1c5e34}
+  .b-neu{background:#3a2e12;color:var(--warn);border:1px solid #5e4a1c}
+  .b-ok{background:#10361f;color:var(--down);border:1px solid #1c5e34}
+  .b-wait{background:#3a2e12;color:var(--warn);border:1px solid #5e4a1c}
+  .disc{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;color:var(--muted);font-size:12.5px;margin-top:10px}
+  .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:10px;margin:14px 0;background:var(--panel)}
+  .tbl{border-collapse:collapse;width:100%;font-size:13px}
+  .tbl th{background:var(--panel2);color:var(--dim);text-align:left;padding:10px 12px;font-weight:600;white-space:nowrap}
+  .tbl td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+  .signal{font-weight:800;font-size:13px;white-space:nowrap}
+  .sgn-bull{color:var(--up)} .sgn-bear{color:var(--down)} .sgn-neu{color:var(--warn)}
+  .confbar{height:6px;border-radius:3px;background:var(--chip);margin-top:4px;overflow:hidden}
+  .confbar i{display:block;height:100%;border-radius:3px}
+  .dailyItem{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--info);
+    border-radius:10px;padding:12px 14px;margin-bottom:10px}
+  .dailyItem .dh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+  .dailyItem .dt{font-size:12.5px;color:var(--muted)}
+  .dailyItem .dom{font-size:11px;background:var(--chip);border:1px solid var(--line);color:var(--gold);padding:2px 8px;border-radius:6px}
+  .dailyItem .ti{margin:6px 0 2px;font-weight:600;color:var(--txt)}
+  .dailyItem .su{color:var(--dim);font-size:13px}
+  .dayhead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .kv{display:grid;grid-template-columns:130px 1fr;gap:6px 14px;font-size:13.5px;margin-top:6px}
+  .kv .k{color:var(--gold);font-weight:600}
+  .kv .v{color:var(--dim)}
+  footer{padding:26px 0 50px;color:var(--muted);font-size:12.5px}
+  footer a{color:var(--dim)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
+  .center{text-align:center;color:var(--muted);padding:30px 0;font-size:14px}
+  .big{font-size:40px;font-weight:800;line-height:1.1}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">金</div>
+      <div>
+        <h1 id="siteTitle">金价监测 · csg-power-daily4</h1>
+        <div class="sub" id="siteSub">国际金价 XAU/USD · 三根支撑 · 三信号 · 多大师判断 · 每日自动更新</div>
+      </div>
+    </div>
+    <div class="meta">
+      <span class="pill">数据更新：<b id="metaUpdated">-</b></span>
+      <span class="pill">数据来源：<b id="metaSource">-</b></span>
+      <span class="pill">文章：<a id="articleLink" href="#" target="_blank" rel="noopener">公众号原文 ↗</a></span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="wrap">
+  <a href="#live">行情快照</a>
+  <a href="#chart">价格轨迹</a>
+  <a href="#supports">三根支撑</a>
+  <a href="#signals">三大信号</a>
+  <a href="#sectors">板块拆解</a>
+  <a href="#masters">大师判断</a>
+  <a href="#daily">每日动态</a>
+</div></nav>
+
+<main class="wrap">
+
+  <!-- 行情快照 -->
+  <section id="live">
+    <h2><span class="tag">LIVE</span> 行情快照 <span class="badge b-ok" id="liveState">联网中</span></h2>
+    <p class="lead" id="liveNote">实时金价由浏览器直连公开行情接口，若不可达则回退到每日快照数据。</p>
+    <div class="grid g4" id="liveCards"></div>
+    <div class="legend">
+      <span><i style="background:var(--up)"></i>涨 / 看多（红）</span>
+      <span><i style="background:var(--down)"></i>跌 / 看空（绿）</span>
+      <span><i style="background:var(--warn)"></i>中性 / 关注（黄）</span>
+    </div>
+  </section>
+
+  <!-- 价格轨迹 -->
+  <section id="chart">
+    <h2>价格轨迹 <span class="tag">5598 → 3943 → 4400 → 4452</span></h2>
+    <p class="lead" id="scenarioNote"></p>
+    <div class="card" style="padding:10px 16px">
+      <svg id="priceChart" viewBox="0 0 680 240" width="100%" style="display:block;max-height:300px"></svg>
+    </div>
+    <div class="grid g3" style="margin-top:14px" id="levelCards"></div>
+  </section>
+
+  <!-- 三根支撑 -->
+  <section id="supports">
+    <h2>三根结构性支撑 <span class="tag">看多逻辑</span></h2>
+    <p class="lead">文章给出的三根支撑：美债 40 万亿 / 央行创纪录购金 / 资金面未过热。</p>
+    <div class="grid g3" id="supportCards"></div>
+  </section>
+
+  <!-- 三大信号 -->
+  <section id="signals">
+    <h2>三大观察信号 <span class="tag">自己判断的标尺</span></h2>
+    <p class="lead">任一信号反转，再重新评估长期逻辑。</p>
+    <div class="grid g3" id="signalCards"></div>
+  </section>
+
+  <!-- 板块拆解 -->
+  <section id="sectors">
+    <h2>板块拆解 <span class="tag">文章五大板块</span></h2>
+    <p class="lead">从文章提炼的五大分析板块，已按 8/18 实时数据修正（4450 已突破）。</p>
+    <div class="grid g3" id="sectorCards"></div>
+  </section>
+
+  <!-- 大师判断 -->
+  <section id="masters">
+    <h2>多大师判断 <span class="tag">19 位圆桌</span></h2>
+    <p class="lead">AI 对冲基金投资大师专家团 · 主理人贺知衡编排，各大师独立分析后信号汇总；风险管理师与投资组合经理决策将随后更新。</p>
+    <div id="decisionCard"></div>
+    <div id="mastersStats"></div>
+    <div class="tblwrap" id="mastersTblWrap"><div class="center" id="mastersLoading">大师分析进行中…（19 位圆桌后台运行，结果将实时更新）</div></div>
+    <div id="philosophyConflict"></div>
+  </section>
+
+  <!-- 每日动态 -->
+  <section id="daily">
+    <h2>每日动态 <span class="tag">自动更新</span></h2>
+    <p class="lead">每日自动联网检索金价、美债、美元、央行购金、ETF 资金与相关新闻，追加记录。</p>
+    <div id="dailyList"></div>
+  </section>
+
+  <footer>
+    <p>站点：<a href="https://hxj0515.github.io/csg-power-daily4/" target="_blank" rel="noopener">https://hxj0515.github.io/csg-power-daily4/</a> · 仓库：<a href="https://github.com/hxj0515/csg-power-daily4" target="_blank" rel="noopener">github.com/hxj0515/csg-power-daily4</a> · 维护：WorkBuddy 助手每日联网更新</p>
+    <p>⚠️ 以上内容由 AI 基于公开信息整理生成，仅供参考，不构成任何投资建议或个股推荐。投资有风险，决策需谨慎。</p>
+  </footer>
+
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+let D=null;
+
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function signalClass(sig){
+  sig=String(sig||'').toLowerCase();
+  if(sig.includes('bull')||sig.includes('看多')||sig.includes('买入')||sig==='buy')return 'sgn-bull';
+  if(sig.includes('bear')||sig.includes('看空')||sig.includes('卖出')||sig==='sell')return 'sgn-bear';
+  return 'sgn-neu';
+}
+function signalZh(sig){
+  sig=String(sig||'').toLowerCase();
+  if(sig.includes('bull')||sig.includes('buy'))return '看多';
+  if(sig.includes('bear')||sig.includes('sell'))return '看空';
+  return '中性';
+}
+function badgeCls(sig){
+  sig=String(sig||'').toLowerCase();
+  if(sig.includes('bull')||sig.includes('buy'))return 'b-bull';
+  if(sig.includes('bear')||sig.includes('sell'))return 'b-bear';
+  return 'b-neu';
+}
+
+function renderMeta(){
+  $('metaUpdated').textContent=D.meta.updated;
+  $('metaSource').textContent=D.meta.source;
+  $('articleLink').href=D.meta.article_url;
+  $('articleLink').textContent='公众号原文 ↗';
+  $('scenarioNote').textContent=(D.meta.scenario.note||'')+' ｜ 高点 '+D.meta.scenario.high+'（'+D.meta.scenario.high_date+'）→ 低点 '+D.meta.scenario.low+'（'+D.meta.scenario.low_date+'）→ 文章时 '+D.meta.scenario.article_price+'（'+D.meta.scenario.article_date+'）';
+}
+
+function renderLive(){
+  const l=D.live||{};
+  const cards=[
+    {n:'XAU/USD',v:fmtNum(l.xau_usd),l:'伦敦金 现货',d:'昨结 '+fmtNum(l.prev_close)+'（'+(l.change_pct!=null?l.change_pct+'%':'')+'）',cls:l.change_pct<0?'down':'up'},
+    {n:'沪金主力',v:fmtNum(l.sh_gold_main),l:'元/克 · AU2610',d:'上海金现 '+fmtNum(l.sh_gold_au9999),cls:'up'},
+    {n:'美元指数',v:fmtNum(l.dxy),l:'DXY',d:'20 日 -1.58% 走弱',cls:l.dxy&&l.dxy<100?'down':'up'},
+    {n:'美债 30Y',v:l.us30y!=null?l.us30y.toFixed(2)+'%':'—',l:'长端收益率',d:'10Y '+fmtNum(l.us10y)+'% · 2Y '+fmtNum(l.us2y)+'%',cls:'warn'}
+  ];
+  $('liveCards').innerHTML=cards.map(c=>`<div class="card stat"><div class="l">${c.l}</div><div class="n ${c.cls}">${c.v}</div><div class="d">${c.d}</div></div>`).join('');
+  $('liveNote').textContent='快照时间：'+l.fetched_at+' · 来源：'+l.source+' · 三信号状态：ETF 未过热 / 央行购金未减速 / 30Y 未回落（均未触发看空）。';
+}
+
+function fmtNum(v){
+  if(v==null)return '—';
+  const n=Number(v);
+  return n.toLocaleString('en-US',{maximumFractionDigits:2});
+}
+
+function renderChart(){
+  const s=D.meta.scenario,l=D.live||{};
+  const pts=[
+    {x:40, y:5598, label:'1月 高 '+s.high},
+    {x:140,y:3943, label:'6月 低 '+s.low},
+    {x:240,y:s.article_price, label:'8/17 '+s.article_price},
+    {x:300,y:l.xau_usd??4452.9, label:'8/18 现价 '+fmtNum(l.xau_usd)}
+  ];
+  const yMin=3900,yMax=5700;
+  const X=x=>40+(x-40)*(600/260), Y=y=>210-((y-yMin)/(yMax-yMin))*185;
+  const line=pts.map((p,i)=>(i? 'L':'M')+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)).join(' ');
+  const resY=Y(s.resistance), supY=Y(s.support);
+  let svg=`<rect x="0" y="0" width="680" height="240" fill="#141c26" rx="10"/>`;
+  svg+=`<line x1="20" y1="${resY}" x2="660" y2="${resY}" stroke="#ffb454" stroke-width="1" stroke-dasharray="5 4" opacity=".7"/>`;
+  svg+=`<text x="24" y="${resY-6}" fill="#ffb454" font-size="11">4450 压力（8/17 已突破→转支撑）</text>`;
+  svg+=`<line x1="20" y1="${supY}" x2="660" y2="${supY}" stroke="#23d18b" stroke-width="1" stroke-dasharray="5 4" opacity=".7"/>`;
+  svg+=`<text x="24" y="${supY-6}" fill="#23d18b" font-size="11">4300 支撑</text>`;
+  svg+=`<path d="${line}" fill="none" stroke="#f0c24b" stroke-width="2.5" stroke-linejoin="round"/>`;
+  pts.forEach(p=>{
+    const cx=X(p.x), cy=Y(p.y);
+    svg+=`<circle cx="${cx}" cy="${cy}" r="4.5" fill="#f0c24b" stroke="#0c1117" stroke-width="1.5"/>`;
+    svg+=`<text x="${cx-55}" y="${cy-10}" fill="#e6edf3" font-size="11">${p.label}</text>`;
+  });
+  $('priceChart').innerHTML=svg;
+}
+
+function renderLevels(){
+  const s=D.meta.scenario,l=D.live||{};
+  const levels=[
+    {t:'4450 压力位',v:'已突破（8/17 收 4473.70）',d:'8/13 冲 4449 未破、多次被压回；8/17 放量站上，现为回踩确认支撑。',cls:'warn'},
+    {t:'4300 支撑位',v:fmtNum(s.support),d:'此前为阻力，突破后回调获买盘承接；跌破 4300 后迅速反弹回 4400，底部抬高。',cls:'down'},
+    {t:'当前价 vs 高低点',v:fmtNum(l.xau_usd),d:'较 3943 底部 +'+(l.xau_usd?(l.xau_usd/3943-1)*100:0).toFixed(1)+'%，较高点 5598 仍 -'+(l.xau_usd?(1-l.xau_usd/5598)*100:0).toFixed(1)+'%。',cls:'up'}
+  ];
+  $('levelCards').innerHTML=levels.map(x=>`<div class="card stat"><div class="l">${x.t}</div><div class="n ${x.cls}">${x.v}</div><div class="d">${x.d}</div></div>`).join('');
+}
+
+function renderSupports(){
+  $('supportCards').innerHTML=(D.supports||[]).map(x=>`
+    <div class="card">
+      <h3>${esc(x.title)} <span class="badge ${badgeCls(x.stance)}">${esc(x.stance)}</span></h3>
+      <p style="color:var(--gold);font-weight:600">${esc(x.key)}</p>
+      <p>${esc(x.detail)}</p>
+    </div>`).join('');
+}
+
+function renderSignals(){
+  $('signalCards').innerHTML=(D.watch_signals||[]).map(x=>`
+    <div class="card">
+      <h3>${esc(x.name)}</h3>
+      <p><span class="gold" style="font-weight:600">当前状态：</span>${esc(x.now)}</p>
+      <p><span class="up" style="font-weight:600">偏多当：</span>${esc(x.bullish_if)}</p>
+      <p><span class="down" style="font-weight:600">转空当：</span>${esc(x.bearish_if)}</p>
+    </div>`).join('');
+}
+
+function renderSectors(){
+  $('sectorCards').innerHTML=(D.sectors||[]).map(x=>`
+    <div class="card">
+      <h3>${esc(x.name)} <span class="badge ${badgeCls(x.stance)}">${esc(x.stance)}</span></h3>
+      <p style="color:var(--gold);font-weight:600">${esc(x.key)}</p>
+      <p>${esc(x.summary)}</p>
+    </div>`).join('');
+}
+
+function renderMasters(){
+  const ms=D.masters||[];
+  $('mastersLoading').textContent='';
+  if(!ms.length){
+    $('mastersTblWrap').innerHTML='<div class="center">大师分析进行中…（19 位圆桌后台运行，结果将实时更新）</div>';
+    return;
+  }
+  const stats={bull:0,bear:0,neu:0};
+  ms.forEach(m=>{const z=signalZh(m.signal); if(z==='看多')stats.bull++; else if(z==='看空')stats.bear++; else stats.neu++;});
+  $('mastersStats').innerHTML=`
+    <div class="grid g3" style="margin-bottom:6px">
+      <div class="card stat"><div class="l">看多</div><div class="n up">${stats.bull} 位</div></div>
+      <div class="card stat"><div class="l">看空</div><div class="n down">${stats.bear} 位</div></div>
+      <div class="card stat"><div class="l">中性</div><div class="n warn">${stats.neu} 位</div></div>
+    </div>`;
+  const rows=ms.map(m=>{
+    const conf=m.confidence!=null?Number(m.confidence):0;
+    const cls=signalClass(m.signal);
+    return `<tr>
+      <td><b>${esc(m.name)}</b><div style="color:var(--muted);font-size:11.5px">${esc(m.role||'')}</div></td>
+      <td><span class="signal ${cls}">${signalZh(m.signal)}</span></td>
+      <td style="white-space:nowrap">${conf}%<div class="confbar"><i style="width:${conf}%;background:${cls==='sgn-bull'?'var(--up)':cls==='sgn-bear'?'var(--down)':'var(--warn)'}"></i></div></td>
+      <td>${esc(m.reason||'')}</td>
+    </tr>`;
+  }).join('');
+  $('mastersTblWrap').innerHTML=`<table class="tbl">
+    <thead><tr><th>大师 / 分析师</th><th>信号</th><th>信心</th><th>核心理由（一句话）</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+  // 最看多 vs 最看空
+  const bulls=ms.filter(m=>signalZh(m.signal)==='看多').sort((a,b)=>Number(b.confidence||0)-Number(a.confidence||0));
+  const bears=ms.filter(m=>signalZh(m.signal)==='看空').sort((a,b)=>Number(b.confidence||0)-Number(a.confidence||0));
+  if(bulls.length||bears.length){
+    let html='<div class="grid g2" style="margin-top:14px">';
+    if(bulls.length) html+=`<div class="card"><h3 class="up">最看多：${esc(bulls[0].name)}（${bulls[0].confidence}%）</h3><p>${esc(bulls[0].reason)}</p></div>`;
+    if(bears.length) html+=`<div class="card"><h3 class="down">最看空：${esc(bears[0].name)}（${bears[0].confidence}%）</h3><p>${esc(bears[0].reason)}</p></div>`;
+    if(!bears.length) html+=`<div class="card"><h3 class="warn">最看空：暂无</h3><p>当前 19 位圆桌暂无看空信号（或仍在运行中）。</p></div>`;
+    html+='</div>';
+    $('philosophyConflict').innerHTML=html;
+  }
+}
+
+function renderDecision(){
+  const dc=D.decision;
+  const box=$('decisionCard');
+  if(!dc||!dc.signal){ box.innerHTML='<div class="disc">投资组合经理最终决策生成中…（将综合 19 份信号 + 风险评估后给出 BUY / SELL / HOLD）</div>'; return; }
+  const cls=badgeCls(dc.signal);
+  box.innerHTML=`<div class="card" style="border-left:3px solid ${dc.signal.toLowerCase().includes('buy')?'var(--up)':dc.signal.toLowerCase().includes('sell')?'var(--down)':'var(--warn)'}">
+    <h3>最终决策 <span class="badge ${cls}">${esc(dc.signal)}</span> 信心：${esc(dc.confidence||'—')} 风险：${esc(dc.risk_level||'—')} 建议仓位：${esc(dc.position||'—')}</h3>
+    <p>${esc(dc.reason||'')}</p>
+    ${dc.plan?`<div class="kv">${Object.entries(dc.plan).map(([k,v])=>`<div class="k">${esc(k)}</div><div class="v">${esc(v)}</div>`).join('')}</div>`:''}
+  </div>`;
+}
+
+function renderDaily(){
+  const list=D.daily||[];
+  if(!list.length){$('dailyList').innerHTML='<div class="center">暂无动态</div>';return;}
+  $('dailyList').innerHTML=list.map(day=>{
+    const items=(day.items||[]).map(it=>`
+      <div class="dailyItem">
+        <div class="dh"><span class="dom">${esc(it.domain)}</span><span class="dt">${esc(it.title)}</span></div>
+        <div class="su">${esc(it.summary)}</div>
+        ${it.url?`<div style="margin-top:4px"><a href="${esc(it.url)}" target="_blank" rel="noopener">来源链接 ↗</a></div>`:''}
+      </div>`).join('');
+    return `<div style="margin-bottom:20px">
+      <div class="dayhead"><b class="gold">${esc(day.date)}</b></div>
+      ${day.note?`<div class="disc" style="margin-bottom:10px">${esc(day.note)}</div>`:''}
+      ${items}
+    </div>`;
+  }).join('');
+}
+
+function renderAll(){
+  if(!D)return;
+  renderMeta(); renderLive(); renderChart(); renderLevels();
+  renderSupports(); renderSignals(); renderSectors();
+  renderMasters(); renderDecision(); renderDaily();
+}
+
+// 实时金价（浏览器直连，失败回退 daily.json）
+async function liveFetch(){
+  try{
+    const r=await fetch('https://api.gold-api.com/price/XAU',{signal:AbortSignal.timeout(8000)});
+    if(!r.ok)throw 0;
+    const j=await r.json();
+    if(j&&j.price){
+      D.live.xau_usd=j.price;
+      D.live.fetched_at=new Date().toLocaleString('zh-CN',{hour12:false});
+      D.live.source='实时接口(api.gold-api.com)';
+      $('liveState').textContent='实时已更新';
+      $('liveState').className='badge b-ok';
+      renderLive(); renderChart(); renderLevels();
+    }
+  }catch(e){ $('liveState').textContent='回退每日快照'; $('liveState').className='badge b-wait'; }
+}
+
+(async function(){
+  try{
+    const r=await fetch('daily.json',{cache:'no-store'});
+    D=await r.json();
+    renderAll();
+    liveFetch();
+  }catch(e){
+    $('mastersLoading').textContent='数据加载失败，请刷新重试。';
+    $('liveState').textContent='加载失败';
+    $('liveState').className='badge b-wait';
+  }
+})();
+</script>
+</body>
+</html>
