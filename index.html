@@ -9,7 +9,7 @@
     --bg:#0c1117; --panel:#141c26; --panel2:#1b2531; --line:#26323f;
     --txt:#e6edf3; --dim:#9fb0c0; --muted:#6b7c8d;
     --up:#ff5c5c; --down:#23d18b; --warn:#ffb454; --info:#36a3ff;
-    --chip:#1d2a38; --gold:#f0c24b;
+    --chip:#1d2a38; --gold:#f0c24b; --tier-bank:#36a3ff; --tier-brand:#ff5c5c; --tier-base:#f0c24b;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -18,7 +18,7 @@
     line-height:1.65;font-size:15px}
   a{color:var(--info);text-decoration:none}
   a:hover{text-decoration:underline}
-  .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 18px}
   header.hero{background:linear-gradient(135deg,#2a240e 0%,#0c1117 55%,#101722 100%);
     border-bottom:1px solid var(--line);padding:34px 0 26px}
   .brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
@@ -35,15 +35,16 @@
   nav.toc .wrap{display:flex;gap:8px;flex-wrap:wrap}
   nav.toc a{color:var(--dim);font-size:13.5px;padding:6px 12px;border-radius:8px;border:1px solid transparent}
   nav.toc a:hover{background:var(--panel2);color:var(--txt);text-decoration:none}
-  section{padding:30px 0;border-bottom:1px solid var(--line)}
+  section{padding:28px 0;border-bottom:1px solid var(--line)}
   h2{font-size:21px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
   h2 .tag{font-size:11px;background:var(--gold);color:#2a240e;padding:2px 8px;border-radius:6px;font-weight:700}
-  .lead{color:var(--dim);margin:0 0 18px;font-size:14px}
+  .lead{color:var(--dim);margin:0 0 16px;font-size:14px}
   .grid{display:grid;gap:14px}
   .g2{grid-template-columns:repeat(2,1fr)}
   .g3{grid-template-columns:repeat(3,1fr)}
   .g4{grid-template-columns:repeat(4,1fr)}
-  @media(max-width:880px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .g5{grid-template-columns:repeat(5,1fr)}
+  @media(max-width:880px){.g2,.g3,.g4,.g5{grid-template-columns:1fr}}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
   .card h3{margin:0 0 8px;font-size:16px}
   .card p{margin:6px 0;color:var(--dim);font-size:13.5px}
@@ -51,7 +52,7 @@
   .stat .l{font-size:12px;color:var(--muted)}
   .stat .d{font-size:12.5px;margin-top:2px}
   .up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)} .info{color:var(--info)} .gold{color:var(--gold)}
-  .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;margin-left:6px;vertical-align:middle}
+  .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;margin-left:6px;vertical-align:middle;font-weight:600}
   .b-bull{background:#3a1a1a;color:var(--up);border:1px solid #5e2a2a}
   .b-bear{background:#10361f;color:var(--down);border:1px solid #1c5e34}
   .b-neu{background:#3a2e12;color:var(--warn);border:1px solid #5e4a1c}
@@ -60,8 +61,9 @@
   .disc{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;color:var(--muted);font-size:12.5px;margin-top:10px}
   .tblwrap{overflow:auto;border:1px solid var(--line);border-radius:10px;margin:14px 0;background:var(--panel)}
   .tbl{border-collapse:collapse;width:100%;font-size:13px}
-  .tbl th{background:var(--panel2);color:var(--dim);text-align:left;padding:10px 12px;font-weight:600;white-space:nowrap}
-  .tbl td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+  .tbl caption{caption-side:top;text-align:left;color:var(--dim);font-size:12.5px;padding:10px 12px 6px;font-weight:600}
+  .tbl th{background:var(--panel2);color:var(--dim);text-align:left;padding:9px 12px;font-weight:600;white-space:nowrap}
+  .tbl td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
   .signal{font-weight:800;font-size:13px;white-space:nowrap}
   .sgn-bull{color:var(--up)} .sgn-bear{color:var(--down)} .sgn-neu{color:var(--warn)}
   .confbar{height:6px;border-radius:3px;background:var(--chip);margin-top:4px;overflow:hidden}
@@ -74,7 +76,7 @@
   .dailyItem .ti{margin:6px 0 2px;font-weight:600;color:var(--txt)}
   .dailyItem .su{color:var(--dim);font-size:13px}
   .dayhead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-  .kv{display:grid;grid-template-columns:130px 1fr;gap:6px 14px;font-size:13.5px;margin-top:6px}
+  .kv{display:grid;grid-template-columns:140px 1fr;gap:6px 14px;font-size:13.5px;margin-top:6px}
   .kv .k{color:var(--gold);font-weight:600}
   .kv .v{color:var(--dim)}
   footer{padding:26px 0 50px;color:var(--muted);font-size:12.5px}
@@ -82,7 +84,12 @@
   .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px}
   .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
   .center{text-align:center;color:var(--muted);padding:30px 0;font-size:14px}
-  .big{font-size:40px;font-weight:800;line-height:1.1}
+  .tierbank{color:var(--tier-bank)} .tierbrand{color:var(--tier-brand)} .tierbase{color:var(--tier-base)}
+  .tierRowBrand td{border-left:3px solid var(--tier-brand);padding-left:9px}
+  .tierRowBank td{border-left:3px solid var(--tier-bank);padding-left:9px}
+  .tierRowBase td{border-left:3px solid var(--tier-base);padding-left:9px}
+  .tierRowWater td{border-left:3px solid #b48eff;padding-left:9px}
+  .tierRowIntl td{border-left:3px solid var(--warn);padding-left:9px}
 </style>
 </head>
 <body>
@@ -93,7 +100,7 @@
       <div class="logo">金</div>
       <div>
         <h1 id="siteTitle">金价监测 · csg-power-daily4</h1>
-        <div class="sub" id="siteSub">国际金价 XAU/USD · 三根支撑 · 三信号 · 多大师判断 · 每日自动更新</div>
+        <div class="sub" id="siteSub">国际金价 XAU/USD · 每日单价折算 · 三支撑三信号 · 广东银行金行对比 · 多大师判断 · 每日自动更新</div>
       </div>
     </div>
     <div class="meta">
@@ -106,7 +113,9 @@
 
 <nav class="toc"><div class="wrap">
   <a href="#live">行情快照</a>
-  <a href="#chart">价格轨迹</a>
+  <a href="#chart">每日单价轨迹</a>
+  <a href="#banks">广东银行/金行</a>
+  <a href="#verdict">购入判断</a>
   <a href="#supports">三根支撑</a>
   <a href="#signals">三大信号</a>
   <a href="#sectors">板块拆解</a>
@@ -116,7 +125,6 @@
 
 <main class="wrap">
 
-  <!-- 行情快照 -->
   <section id="live">
     <h2><span class="tag">LIVE</span> 行情快照 <span class="badge b-ok" id="liveState">联网中</span></h2>
     <p class="lead" id="liveNote">实时金价由浏览器直连公开行情接口，若不可达则回退到每日快照数据。</p>
@@ -128,48 +136,56 @@
     </div>
   </section>
 
-  <!-- 价格轨迹 -->
   <section id="chart">
-    <h2>价格轨迹 <span class="tag">5598 → 3943 → 4400 → 4452</span></h2>
+    <h2>价格轨迹 <span class="tag">2026/1/5 – 8/18 每日单价折算</span></h2>
     <p class="lead" id="scenarioNote"></p>
-    <div class="card" style="padding:10px 16px">
-      <svg id="priceChart" viewBox="0 0 680 240" width="100%" style="display:block;max-height:300px"></svg>
+    <div class="card" style="padding:8px 12px">
+      <svg id="priceChart" viewBox="0 0 680 250" width="100%" style="display:block;max-height:330px"></svg>
     </div>
+    <p class="disc" id="chartNote"></p>
     <div class="grid g3" style="margin-top:14px" id="levelCards"></div>
   </section>
 
-  <!-- 三根支撑 -->
+  <section id="banks">
+    <h2>广东银行/金行/水贝单价对比 <span class="tag">元/克</span></h2>
+    <p class="lead">8/18 广东广州今日实时挂牌价，从上金所基准到品牌足金，价差达 377 元/克。优先关注银行投资金条（水贝/银行金条/品牌投资金条/品牌足金价差见下表）。</p>
+    <div class="tblwrap"><table class="tbl" id="banksTbl"></table></div>
+    <div class="grid g4" style="margin-top:10px" id="banksTierCards"></div>
+  </section>
+
+  <section id="verdict">
+    <h2>综合购入判断 <span class="tag">偏多配置（非追高）</span></h2>
+    <p class="lead">综合 19 位投资大师信号 + 文章三支撑/三信号 + 估值公平值 + 广东今日单价对比，给出的具体操作建议。</p>
+    <div id="verdictCard"></div>
+  </section>
+
   <section id="supports">
     <h2>三根结构性支撑 <span class="tag">看多逻辑</span></h2>
     <p class="lead">文章给出的三根支撑：美债 40 万亿 / 央行创纪录购金 / 资金面未过热。</p>
     <div class="grid g3" id="supportCards"></div>
   </section>
 
-  <!-- 三大信号 -->
   <section id="signals">
     <h2>三大观察信号 <span class="tag">自己判断的标尺</span></h2>
     <p class="lead">任一信号反转，再重新评估长期逻辑。</p>
     <div class="grid g3" id="signalCards"></div>
   </section>
 
-  <!-- 板块拆解 -->
   <section id="sectors">
     <h2>板块拆解 <span class="tag">文章五大板块</span></h2>
     <p class="lead">从文章提炼的五大分析板块，已按 8/18 实时数据修正（4450 已突破）。</p>
     <div class="grid g3" id="sectorCards"></div>
   </section>
 
-  <!-- 大师判断 -->
   <section id="masters">
     <h2>多大师判断 <span class="tag">19 位圆桌</span></h2>
     <p class="lead">AI 对冲基金投资大师专家团 · 主理人贺知衡编排，各大师独立分析后信号汇总；风险管理师与投资组合经理决策将随后更新。</p>
     <div id="decisionCard"></div>
     <div id="mastersStats"></div>
-    <div class="tblwrap" id="mastersTblWrap"><div class="center" id="mastersLoading">大师分析进行中…（19 位圆桌后台运行，结果将实时更新）</div></div>
+    <div class="tblwrap"><table class="tbl" id="mastersTbl"></table></div>
     <div id="philosophyConflict"></div>
   </section>
 
-  <!-- 每日动态 -->
   <section id="daily">
     <h2>每日动态 <span class="tag">自动更新</span></h2>
     <p class="lead">每日自动联网检索金价、美债、美元、央行购金、ETF 资金与相关新闻，追加记录。</p>
@@ -188,32 +204,19 @@ const $=id=>document.getElementById(id);
 let D=null;
 
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function fmtNum(v){if(v==null)return '—';const n=Number(v);return n.toLocaleString('en-US',{maximumFractionDigits:2});}
 
-function signalClass(sig){
-  sig=String(sig||'').toLowerCase();
-  if(sig.includes('bull')||sig.includes('看多')||sig.includes('买入')||sig==='buy')return 'sgn-bull';
-  if(sig.includes('bear')||sig.includes('看空')||sig.includes('卖出')||sig==='sell')return 'sgn-bear';
-  return 'sgn-neu';
-}
-function signalZh(sig){
-  sig=String(sig||'').toLowerCase();
-  if(sig.includes('bull')||sig.includes('buy'))return '看多';
-  if(sig.includes('bear')||sig.includes('sell'))return '看空';
-  return '中性';
-}
-function badgeCls(sig){
-  sig=String(sig||'').toLowerCase();
-  if(sig.includes('bull')||sig.includes('buy'))return 'b-bull';
-  if(sig.includes('bear')||sig.includes('sell'))return 'b-bear';
-  return 'b-neu';
-}
+function signalClass(sig){sig=String(sig||'').toLowerCase();if(sig.includes('bull')||sig.includes('看多')||sig.includes('买入')||sig==='buy')return 'sgn-bull';if(sig.includes('bear')||sig.includes('看空')||sig.includes('卖出')||sig==='sell')return 'sgn-bear';return 'sgn-neu';}
+function signalZh(sig){sig=String(sig||'').toLowerCase();if(sig.includes('bull')||sig.includes('buy'))return '看多';if(sig.includes('bear')||sig.includes('sell'))return '看空';return '中性';}
+function badgeCls(sig){sig=String(sig||'').toLowerCase();if(sig.includes('bull')||sig.includes('buy'))return 'b-bull';if(sig.includes('bear')||sig.includes('sell'))return 'b-bear';return 'b-neu';}
 
 function renderMeta(){
   $('metaUpdated').textContent=D.meta.updated;
   $('metaSource').textContent=D.meta.source;
   $('articleLink').href=D.meta.article_url;
   $('articleLink').textContent='公众号原文 ↗';
-  $('scenarioNote').textContent=(D.meta.scenario.note||'')+' ｜ 高点 '+D.meta.scenario.high+'（'+D.meta.scenario.high_date+'）→ 低点 '+D.meta.scenario.low+'（'+D.meta.scenario.low_date+'）→ 文章时 '+D.meta.scenario.article_price+'（'+D.meta.scenario.article_date+'）';
+  const s=D.meta.scenario;
+  $('scenarioNote').textContent=(s.note||'')+' ｜ 高点 '+s.high+' USD（'+s.high_date+'）→ 低点 '+s.low+' USD（'+s.low_date+'）→ 文章时 '+s.article_price+'（'+s.article_date+'）｜ 折算说明：'+D.meta.fx_note;
 }
 
 function renderLive(){
@@ -225,49 +228,162 @@ function renderLive(){
     {n:'美债 30Y',v:l.us30y!=null?l.us30y.toFixed(2)+'%':'—',l:'长端收益率',d:'10Y '+fmtNum(l.us10y)+'% · 2Y '+fmtNum(l.us2y)+'%',cls:'warn'}
   ];
   $('liveCards').innerHTML=cards.map(c=>`<div class="card stat"><div class="l">${c.l}</div><div class="n ${c.cls}">${c.v}</div><div class="d">${c.d}</div></div>`).join('');
-  $('liveNote').textContent='快照时间：'+l.fetched_at+' · 来源：'+l.source+' · 三信号状态：ETF 未过热 / 央行购金未减速 / 30Y 未回落（均未触发看空）。';
-}
-
-function fmtNum(v){
-  if(v==null)return '—';
-  const n=Number(v);
-  return n.toLocaleString('en-US',{maximumFractionDigits:2});
+  $('liveNote').textContent='快照：'+l.fetched_at+' · '+l.source+' · 三信号：ETF 未过热 / 央行购金未减速 / 30Y 未回落（均未触发看空）。';
 }
 
 function renderChart(){
-  const s=D.meta.scenario,l=D.live||{};
-  const pts=[
-    {x:40, y:5598, label:'1月 高 '+s.high},
-    {x:140,y:3943, label:'6月 低 '+s.low},
-    {x:240,y:s.article_price, label:'8/17 '+s.article_price},
-    {x:300,y:l.xau_usd??4452.9, label:'8/18 现价 '+fmtNum(l.xau_usd)}
+  const series=D.daily_series||[];
+  if(!series.length){$('priceChart').innerHTML='';return;}
+  const yMin=880,yMax=1360;
+  const X=i=>40+i*(600/(series.length-1));
+  const Y=c=>30+(yMax-c)/(yMax-yMin)*200;
+  // 参考线：上金所 956、银行 970、品牌 1335、估值公平 1043、4450→1027、4300→992.6
+  const refs=[
+    {v:956, label:'品牌足金 1335', cls:'brand'},
+    {v:1043, label:'估值公平 1043', cls:'gold'},
+    {v:992.6, label:'4300→992.6', cls:'down'},
+    {v:1027, label:'4450→1027', cls:'warn'},
+    {v:970, label:'银行 970', cls:'bank'},
+    {v:956, label:'上金所 956', cls:'base'}
   ];
-  const yMin=3900,yMax=5700;
-  const X=x=>40+(x-40)*(600/260), Y=y=>210-((y-yMin)/(yMax-yMin))*185;
-  const line=pts.map((p,i)=>(i? 'L':'M')+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)).join(' ');
-  const resY=Y(s.resistance), supY=Y(s.support);
-  let svg=`<rect x="0" y="0" width="680" height="240" fill="#141c26" rx="10"/>`;
-  svg+=`<line x1="20" y1="${resY}" x2="660" y2="${resY}" stroke="#ffb454" stroke-width="1" stroke-dasharray="5 4" opacity=".7"/>`;
-  svg+=`<text x="24" y="${resY-6}" fill="#ffb454" font-size="11">4450 压力（8/17 已突破→转支撑）</text>`;
-  svg+=`<line x1="20" y1="${supY}" x2="660" y2="${supY}" stroke="#23d18b" stroke-width="1" stroke-dasharray="5 4" opacity=".7"/>`;
-  svg+=`<text x="24" y="${supY-6}" fill="#23d18b" font-size="11">4300 支撑</text>`;
-  svg+=`<path d="${line}" fill="none" stroke="#f0c24b" stroke-width="2.5" stroke-linejoin="round"/>`;
-  pts.forEach(p=>{
-    const cx=X(p.x), cy=Y(p.y);
-    svg+=`<circle cx="${cx}" cy="${cy}" r="4.5" fill="#f0c24b" stroke="#0c1117" stroke-width="1.5"/>`;
-    svg+=`<text x="${cx-55}" y="${cy-10}" fill="#e6edf3" font-size="11">${p.label}</text>`;
+  const colorOf={brand:'#ff5c5c',gold:'#f0c24b',down:'#23d18b',warn:'#ffb454',bank:'#36a3ff',base:'#f0c24b'};
+  let svg=`<rect x="0" y="0" width="680" height="250" fill="#141c26" rx="10"/>`;
+  // Y 轴刻度
+  [900,1000,1100,1200,1300].forEach(v=>{
+    const y=Y(v);
+    svg+=`<line x1="36" y1="${y}" x2="660" y2="${y}" stroke="#26323f" stroke-width="0.5"/>`;
+    svg+=`<text x="6" y="${y+3}" fill="#6b7c8d" font-size="10">${v}</text>`;
   });
+  // 参考线
+  refs.forEach(r=>{
+    const y=Y(r.v);
+    svg+=`<line x1="36" y1="${y}" x2="660" y2="${y}" stroke="${colorOf[r.cls]}" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.55"/>`;
+    svg+=`<text x="666" y="${y+3}" fill="${colorOf[r.cls]}" font-size="9.5" text-anchor="start">${r.label}</text>`;
+  });
+  // 折线
+  const line=series.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.cny).toFixed(1)).join(' ');
+  svg+=`<path d="${line}" fill="none" stroke="#f0c24b" stroke-width="2.2" stroke-linejoin="round"/>`;
+  // 关键点标注
+  const markers=[];
+  const peak=series.reduce((m,p)=>p.cny>m.cny?p:m);
+  const low=series.reduce((m,p)=>p.cny<m.cny?p:m);
+  const last=series[series.length-1];
+  markers.push({p:peak, label:'阶段高 '+peak.cny, color:'#ff5c5c'});
+  markers.push({p:low, label:'阶段低 '+low.cny, color:'#23d18b'});
+  markers.push({p:last, label:'今日 '+last.cny, color:'#36a3ff'});
+  series.forEach((p,i)=>{
+    const cx=X(i), cy=Y(p.cny);
+    svg+=`<circle cx="${cx}" cy="${cy}" r="${(p===peak||p===low||p===last)?4.5:1.5}" fill="${(p===peak||p===low||p===last)?colorOf.gold:'#5a6c7d'}" stroke="#0c1117" stroke-width="0.8"/>`;
+  });
+  markers.forEach(m=>{
+    const idx=series.indexOf(m.p);
+    const cx=X(idx), cy=Y(m.p.cny);
+    svg+=`<text x="${cx+6}" y="${cy-6}" fill="${m.color}" font-size="11" font-weight="700">${m.label}</text>`;
+  });
+  // X 轴首末日期
+  svg+=`<text x="40" y="245" fill="#6b7c8d" font-size="10">${series[0].date}</text>`;
+  svg+=`<text x="660" y="245" fill="#6b7c8d" font-size="10" text-anchor="end">${last.date}</text>`;
   $('priceChart').innerHTML=svg;
+  $('chartNote').textContent='折算口径：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8/15/8/17/8/18 实时点位。横向虚线为今日广东各渠道零售/基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29），文章文章高点 5598 USD（盘中）已超出 Wind 收盘序列；故用 Wind 收盘序列作为基线。';
 }
 
 function renderLevels(){
   const s=D.meta.scenario,l=D.live||{};
+  const last=(D.daily_series||[]).slice(-1)[0]||{};
+  const cnyNow=last.cny||null;
+  const cnyPeak=1246.5;
   const levels=[
-    {t:'4450 压力位',v:'已突破（8/17 收 4473.70）',d:'8/13 冲 4449 未破、多次被压回；8/17 放量站上，现为回踩确认支撑。',cls:'warn'},
-    {t:'4300 支撑位',v:fmtNum(s.support),d:'此前为阻力，突破后回调获买盘承接；跌破 4300 后迅速反弹回 4400，底部抬高。',cls:'down'},
-    {t:'当前价 vs 高低点',v:fmtNum(l.xau_usd),d:'较 3943 底部 +'+(l.xau_usd?(l.xau_usd/3943-1)*100:0).toFixed(1)+'%，较高点 5598 仍 -'+(l.xau_usd?(1-l.xau_usd/5598)*100:0).toFixed(1)+'%。',cls:'up'}
+    {t:'4450 USD 压力位',v:'已突破（8/17 收 4473.70）',d:'折算约 1027 元/克；突破后 4450 由压力转为待确认支撑。',cls:'warn'},
+    {t:'4300 USD 支撑位',v:fmtNum(s.support),d:'折算约 993 元/克；底部抬高结构中关键防线。',cls:'down'},
+    {t:'今日折算价 vs 极端值',v:cnyNow?fmtNum(cnyNow)+' 元/克':'—',d:(()=>{if(!cnyNow)return '';return '较阶段低 923 元/克 +'+(cnyNow/923.3*100-100).toFixed(1)+'%，较阶段高 1247 元/克 仍 -'+(100-cnyNow/1246.5*100).toFixed(1)+'%。';})(),cls:'up'}
   ];
   $('levelCards').innerHTML=levels.map(x=>`<div class="card stat"><div class="l">${x.t}</div><div class="n ${x.cls}">${x.v}</div><div class="d">${x.d}</div></div>`).join('');
+}
+
+function renderBanks(){
+  const list=D.banks_guangdong||[];
+  const tierRow={};
+  list.forEach(b=>{
+    const k=b.tier||'其他';
+    (tierRow[k]=tierRow[k]||[]).push(b);
+  });
+  const tierClass={};
+  tierClass['品牌足金饰品']='tierRowBrand';
+  tierClass['品牌投资金条']='tierRowBrand';
+  tierClass['银行投资金条']='tierRowBank';
+  tierClass['上金所基准']='tierRowBase';
+  tierClass['水贝批发（深圳）']='tierRowWater';
+  tierClass['国际金折算']='tierRowIntl';
+  const tierLabel={};
+  tierLabel['品牌足金饰品']='<span class="tierbrand">品牌足金饰品</span>（含 ~377 元/克品牌+工费+门店溢价）';
+  tierLabel['品牌投资金条']='<span class="tierbrand">品牌投资金条</span>';
+  tierLabel['银行投资金条']='<span class="tierbank">银行投资金条/积存金</span>（溢价最低，回购接近买入价 ⭐优选）';
+  tierLabel['上金所基准']='<span class="tierbase">上金所基准</span>（Au9999/T+D/沪金）';
+  tierLabel['水贝批发（深圳）']='<span style="color:#b48eff">水贝批发（深圳）</span>（足金裸金，工费另计）';
+  tierLabel['国际金折算']='<span class="warn">国际金折算</span>（伦敦金现×7.18÷31.1035）';
+  const tierOrder=['上金所基准','银行投资金条','水贝批发（深圳）','品牌投资金条','品牌足金饰品','国际金折算'];
+  let html='<caption>广东广州今日金价对比（8/18，含品牌饰品/品牌投资金条/银行金条/上金所基准/水贝批发）</caption>';
+  html+='<thead><tr><th>类别</th><th>品牌/机构</th><th>产品</th><th>单价</th><th>涨跌</th><th>城市</th></tr></thead><tbody>';
+  tierOrder.forEach(k=>{
+    const arr=tierRow[k];if(!arr)return;
+    arr.sort((a,b)=>b.price-a.price);
+    arr.forEach(b=>{
+      const cls=tierClass[k]||'';
+      const tierTxt=tierLabel[k]||k;
+      html+=`<tr class="${cls}"><td>${tierTxt}</td><td><b>${esc(b.brand)}</b></td><td>${esc(b.product)}</td><td><b>${fmtNum(b.price)}</b> 元/克</td><td>${b.change!=null?(b.change>=0?'<span class="up">+'+b.change+'</span>':'<span class="down">'+b.change+'</span>'):'—'}</td><td>${esc(b.city)}</td></tr>`;
+    });
+  });
+  html+='</tbody>';
+  $('banksTbl').innerHTML=html;
+  // 四个价格带卡片
+  const bands=[
+    {t:'上金所基准',v:'956',sub:'元/克',cls:'base'},
+    {t:'银行投资金条 ⭐优选',v:'958–988',sub:'元/克（工行/建行/中行/平安/招行/浦发）',cls:'bank'},
+    {t:'水贝批发 + 品牌投资金条',v:'1130–1170',sub:'元/克（裸金 + 工费 / 品牌投资）',cls:'brand'},
+    {t:'品牌足金饰品',v:'1327–1339',sub:'元/克（含 ~377 元/克品牌+工费+门店）',cls:'brand'}
+  ];
+  $('banksTierCards').innerHTML=bands.map(b=>`<div class="card stat"><div class="l">${b.t}</div><div class="n ${b.cls==='base'?'gold':b.cls==='bank'?'info':'up'}">${b.v}</div><div class="d">${b.sub}</div></div>`).join('');
+}
+
+function renderVerdict(){
+  const j=D.judgment;
+  const box=$('verdictCard');
+  if(!j){box.innerHTML='<div class="disc">综合判断生成中…</div>';return;}
+  const cls=badgeCls(j.signal);
+  const pb=j.price_bands_today||{};
+  const pbRows=Object.entries(pb).map(([k,v])=>`<div class="k">${esc(k)}</div><div class="v">${esc(v)}</div>`).join('');
+  const ac=j.actions||{};
+  const acRows=Object.entries(ac).map(([k,v])=>`<div class="k">${esc(k)}</div><div class="v">${esc(v)}</div>`).join('');
+  const pos=(j.positive_factors||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+  const cau=(j.caution_factors||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+  const stp=(j.stops||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+  box.innerHTML=`
+    <div class="card" style="border-left:3px solid var(--gold);background:var(--panel2)">
+      <h3 style="color:var(--gold)">综合结论：${esc(j.signal)} · 信心 ${esc(j.confidence||'—')} <span class="badge ${cls}">${esc(j.signal)}</span></h3>
+      <p style="color:var(--txt);font-size:14.5px"><b>一句话：</b>${esc(j.summary||'')}</p>
+    </div>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="card">
+        <h3 class="up">偏多因素（6+ 项支撑）</h3>
+        <ul style="margin:6px 0;padding-left:20px;color:var(--dim);font-size:13.5px">${pos}</ul>
+      </div>
+      <div class="card">
+        <h3 class="down">需谨慎（4 项风险）</h3>
+        <ul style="margin:6px 0;padding-left:20px;color:var(--dim);font-size:13.5px">${cau}</ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3 class="gold">今日广东单价带（决策参考）</h3>
+      <div class="kv">${pbRows}</div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3 class="gold">具体操作建议</h3>
+      <div class="kv">${acRows}</div>
+    </div>
+    <div class="card" style="margin-top:12px;border-left:3px solid var(--down)">
+      <h3 class="down">三个退出开关</h3>
+      <ul style="margin:6px 0;padding-left:20px;color:var(--dim);font-size:13.5px">${stp}</ul>
+    </div>`;
 }
 
 function renderSupports(){
@@ -278,17 +394,15 @@ function renderSupports(){
       <p>${esc(x.detail)}</p>
     </div>`).join('');
 }
-
 function renderSignals(){
   $('signalCards').innerHTML=(D.watch_signals||[]).map(x=>`
     <div class="card">
       <h3>${esc(x.name)}</h3>
-      <p><span class="gold" style="font-weight:600">当前状态：</span>${esc(x.now)}</p>
+      <p><span class="gold" style="font-weight:600">当前：</span>${esc(x.now)}</p>
       <p><span class="up" style="font-weight:600">偏多当：</span>${esc(x.bullish_if)}</p>
       <p><span class="down" style="font-weight:600">转空当：</span>${esc(x.bearish_if)}</p>
     </div>`).join('');
 }
-
 function renderSectors(){
   $('sectorCards').innerHTML=(D.sectors||[]).map(x=>`
     <div class="card">
@@ -300,83 +414,51 @@ function renderSectors(){
 
 function renderMasters(){
   const ms=D.masters||[];
-  $('mastersLoading').textContent='';
-  if(!ms.length){
-    $('mastersTblWrap').innerHTML='<div class="center">大师分析进行中…（19 位圆桌后台运行，结果将实时更新）</div>';
-    return;
-  }
   const stats={bull:0,bear:0,neu:0};
   ms.forEach(m=>{const z=signalZh(m.signal); if(z==='看多')stats.bull++; else if(z==='看空')stats.bear++; else stats.neu++;});
-  $('mastersStats').innerHTML=`
-    <div class="grid g3" style="margin-bottom:6px">
-      <div class="card stat"><div class="l">看多</div><div class="n up">${stats.bull} 位</div></div>
-      <div class="card stat"><div class="l">看空</div><div class="n down">${stats.bear} 位</div></div>
-      <div class="card stat"><div class="l">中性</div><div class="n warn">${stats.neu} 位</div></div>
-    </div>`;
+  $('mastersStats').innerHTML=`<div class="grid g3" style="margin-bottom:10px"><div class="card stat"><div class="l">看多</div><div class="n up">${stats.bull} 位</div></div><div class="card stat"><div class="l">看空</div><div class="n down">${stats.bear} 位</div></div><div class="card stat"><div class="l">中性</div><div class="n warn">${stats.neu} 位</div></div></div>`;
+  if(!ms.length){$('mastersTbl').innerHTML='<tr><td><div class="center">大师分析进行中…（19 位圆桌后台运行，结果将实时更新）</div></td></tr>';return;}
   const rows=ms.map(m=>{
     const conf=m.confidence!=null?Number(m.confidence):0;
     const cls=signalClass(m.signal);
-    return `<tr>
-      <td><b>${esc(m.name)}</b><div style="color:var(--muted);font-size:11.5px">${esc(m.role||'')}</div></td>
-      <td><span class="signal ${cls}">${signalZh(m.signal)}</span></td>
-      <td style="white-space:nowrap">${conf}%<div class="confbar"><i style="width:${conf}%;background:${cls==='sgn-bull'?'var(--up)':cls==='sgn-bear'?'var(--down)':'var(--warn)'}"></i></div></td>
-      <td>${esc(m.reason||'')}</td>
-    </tr>`;
+    return `<tr><td><b>${esc(m.name)}</b><div style="color:var(--muted);font-size:11.5px">${esc(m.role||'')}</div></td><td><span class="signal ${cls}">${signalZh(m.signal)}</span></td><td style="white-space:nowrap">${conf}%<div class="confbar"><i style="width:${conf}%;background:${cls==='sgn-bull'?'var(--up)':cls==='sgn-bear'?'var(--down)':'var(--warn)'}"></i></div></td><td>${esc(m.reason||'')}</td></tr>`;
   }).join('');
-  $('mastersTblWrap').innerHTML=`<table class="tbl">
-    <thead><tr><th>大师 / 分析师</th><th>信号</th><th>信心</th><th>核心理由（一句话）</th></tr></thead>
-    <tbody>${rows}</tbody></table>`;
-  // 最看多 vs 最看空
+  $('mastersTbl').innerHTML='<caption>19 位投资大师独立信号（已归位 7/19；圆桌进行中，最终信号以全员归位为准）</caption><thead><tr><th>大师 / 分析师</th><th>信号</th><th>信心</th><th>核心理由（一句话）</th></tr></thead><tbody>'+rows+'</tbody>';
   const bulls=ms.filter(m=>signalZh(m.signal)==='看多').sort((a,b)=>Number(b.confidence||0)-Number(a.confidence||0));
   const bears=ms.filter(m=>signalZh(m.signal)==='看空').sort((a,b)=>Number(b.confidence||0)-Number(a.confidence||0));
-  if(bulls.length||bears.length){
-    let html='<div class="grid g2" style="margin-top:14px">';
-    if(bulls.length) html+=`<div class="card"><h3 class="up">最看多：${esc(bulls[0].name)}（${bulls[0].confidence}%）</h3><p>${esc(bulls[0].reason)}</p></div>`;
-    if(bears.length) html+=`<div class="card"><h3 class="down">最看空：${esc(bears[0].name)}（${bears[0].confidence}%）</h3><p>${esc(bears[0].reason)}</p></div>`;
-    if(!bears.length) html+=`<div class="card"><h3 class="warn">最看空：暂无</h3><p>当前 19 位圆桌暂无看空信号（或仍在运行中）。</p></div>`;
-    html+='</div>';
-    $('philosophyConflict').innerHTML=html;
-  }
+  let html='<div class="grid g2" style="margin-top:14px">';
+  if(bulls.length) html+=`<div class="card"><h3 class="up">最看多：${esc(bulls[0].name)}（${bulls[0].confidence}%）</h3><p>${esc(bulls[0].reason)}</p></div>`;
+  if(bears.length) html+=`<div class="card"><h3 class="down">最看空：${esc(bears[0].name)}（${bears[0].confidence}%）</h3><p>${esc(bears[0].reason)}</p></div>`;
+  if(!bears.length) html+=`<div class="card"><h3 class="warn">最看空：暂无</h3><p>当前已归位的 ${ms.length} 位大师清一色偏多，无看空信号（其余 12 位仍在后台）。</p></div>`;
+  html+='</div>';
+  $('philosophyConflict').innerHTML=html;
 }
 
 function renderDecision(){
   const dc=D.decision;
   const box=$('decisionCard');
-  if(!dc||!dc.signal){ box.innerHTML='<div class="disc">投资组合经理最终决策生成中…（将综合 19 份信号 + 风险评估后给出 BUY / SELL / HOLD）</div>'; return; }
+  if(!dc||!dc.signal){box.innerHTML='<div class="disc">投资组合经理最终决策生成中…（将综合 19 份信号 + 风险评估后给出 BUY / SELL / HOLD）</div>';return;}
   const cls=badgeCls(dc.signal);
-  box.innerHTML=`<div class="card" style="border-left:3px solid ${dc.signal.toLowerCase().includes('buy')?'var(--up)':dc.signal.toLowerCase().includes('sell')?'var(--down)':'var(--warn)'}">
-    <h3>最终决策 <span class="badge ${cls}">${esc(dc.signal)}</span> 信心：${esc(dc.confidence||'—')} 风险：${esc(dc.risk_level||'—')} 建议仓位：${esc(dc.position||'—')}</h3>
-    <p>${esc(dc.reason||'')}</p>
-    ${dc.plan?`<div class="kv">${Object.entries(dc.plan).map(([k,v])=>`<div class="k">${esc(k)}</div><div class="v">${esc(v)}</div>`).join('')}</div>`:''}
-  </div>`;
+  box.innerHTML=`<div class="card" style="border-left:3px solid ${dc.signal.toLowerCase().includes('buy')?'var(--up)':dc.signal.toLowerCase().includes('sell')?'var(--down)':'var(--warn)'}"><h3>最终决策 <span class="badge ${cls}">${esc(dc.signal)}</span> 信心：${esc(dc.confidence||'—')} 风险：${esc(dc.risk_level||'—')} 建议仓位：${esc(dc.position||'—')}</h3><p>${esc(dc.reason||'')}</p>${dc.plan?`<div class="kv">${Object.entries(dc.plan).map(([k,v])=>`<div class="k">${esc(k)}</div><div class="v">${esc(v)}</div>`).join('')}</div>`:''}</div>`;
 }
 
 function renderDaily(){
   const list=D.daily||[];
   if(!list.length){$('dailyList').innerHTML='<div class="center">暂无动态</div>';return;}
   $('dailyList').innerHTML=list.map(day=>{
-    const items=(day.items||[]).map(it=>`
-      <div class="dailyItem">
-        <div class="dh"><span class="dom">${esc(it.domain)}</span><span class="dt">${esc(it.title)}</span></div>
-        <div class="su">${esc(it.summary)}</div>
-        ${it.url?`<div style="margin-top:4px"><a href="${esc(it.url)}" target="_blank" rel="noopener">来源链接 ↗</a></div>`:''}
-      </div>`).join('');
-    return `<div style="margin-bottom:20px">
-      <div class="dayhead"><b class="gold">${esc(day.date)}</b></div>
-      ${day.note?`<div class="disc" style="margin-bottom:10px">${esc(day.note)}</div>`:''}
-      ${items}
-    </div>`;
+    const items=(day.items||[]).map(it=>`<div class="dailyItem"><div class="dh"><span class="dom">${esc(it.domain)}</span><span class="dt">${esc(it.title)}</span></div><div class="su">${esc(it.summary)}</div>${it.url?`<div style="margin-top:4px"><a href="${esc(it.url)}" target="_blank" rel="noopener">来源链接 ↗</a></div>`:''}</div>`).join('');
+    return `<div style="margin-bottom:20px"><div class="dayhead"><b class="gold">${esc(day.date)}</b></div>${day.note?`<div class="disc" style="margin-bottom:10px">${esc(day.note)}</div>`:''}${items}</div>`;
   }).join('');
 }
 
 function renderAll(){
   if(!D)return;
   renderMeta(); renderLive(); renderChart(); renderLevels();
+  renderBanks(); renderVerdict();
   renderSupports(); renderSignals(); renderSectors();
   renderMasters(); renderDecision(); renderDaily();
 }
 
-// 实时金价（浏览器直连，失败回退 daily.json）
 async function liveFetch(){
   try{
     const r=await fetch('https://api.gold-api.com/price/XAU',{signal:AbortSignal.timeout(8000)});
@@ -388,9 +470,9 @@ async function liveFetch(){
       D.live.source='实时接口(api.gold-api.com)';
       $('liveState').textContent='实时已更新';
       $('liveState').className='badge b-ok';
-      renderLive(); renderChart(); renderLevels();
+      renderLive();
     }
-  }catch(e){ $('liveState').textContent='回退每日快照'; $('liveState').className='badge b-wait'; }
+  }catch(e){$('liveState').textContent='回退每日快照';$('liveState').className='badge b-wait';}
 }
 
 (async function(){
@@ -400,7 +482,6 @@ async function liveFetch(){
     renderAll();
     liveFetch();
   }catch(e){
-    $('mastersLoading').textContent='数据加载失败，请刷新重试。';
     $('liveState').textContent='加载失败';
     $('liveState').className='badge b-wait';
   }
