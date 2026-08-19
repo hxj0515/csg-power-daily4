@@ -67,6 +67,56 @@ def try_fetch_live():
             continue
     return None
 
+def refresh_supports_and_signals(d):
+    """根据 d.live 重写 supports[0..2].key 与 watch_signals[0..2].now 字段。
+
+    supports[i].detail 与 signals 的 bullish_if / bearish_if 保留原文（定性表述）。
+    现在字段会每日嵌入「数据快照 YYYY-MM-DD」水印，保证这两块跟 live 一起动。
+    """
+    L = d.get("live") or {}
+    today = bj_now().strftime("%Y-%m-%d")
+    xau  = L.get("xau_usd")
+    dxy  = L.get("dxy")
+    us30y= L.get("us30y")
+    us10y= L.get("us10y")
+    us2y = L.get("us2y")
+    etf  = L.get("etf_tonnes")
+    cb_q1= L.get("cb_buy_q1")
+    cb_q2= L.get("cb_buy_q2")
+    spdr = L.get("spdr_latest_tonnes") or 1025.24  # 默认值：8/18 SPDR 最新
+
+    # supports：动态 key（标题、立场、详情保留原文）
+    supports = d.get("supports") or []
+    if len(supports) >= 3:
+        supports[0]["key"] = f"30Y {us30y}% / DXY {dxy}"
+        supports[1]["key"] = f"Q1 +{cb_q1}t / Q2 +{cb_q2}t / 占比 27%"
+        supports[2]["key"] = f"ETF {etf}吨"
+    d["supports"] = supports
+
+    # watch_signals：动态 now（名称、偏多当、转空当保留原文）
+    signals = d.get("watch_signals") or []
+    if len(signals) >= 3:
+        signals[0]["now"] = (
+            f"未触发：SPDR 8/18 减持 5.42 吨至 {spdr} 吨（高位获利了结延续）；"
+            f"国内 14 只黄金 ETF 规模 2715 亿（近一周 +721 亿）、"
+            f"8 月以来 13 只吸金 83.46 亿、华安重返千亿——资金温和流入但未单日暴增，无亢奋见顶信号。"
+            f"数据快照 {today}：XAU ${xau} / DXY {dxy} / 30Y {us30y}%。"
+        )
+        signals[1]["now"] = (
+            f"未触发：反而加速（Q2 净购 288.9 吨同比 +62% 创 Q2 历史新高，H1 345 吨；"
+            f"中国连续 21 个月增持、7 月 +64 万盎司创本轮单月新高；"
+            f"韩国 8/4 重启购金；高盛预计央行月购 60 吨）。"
+            f"数据快照 {today}：央行月购未减速。"
+        )
+        signals[2]["now"] = (
+            f"未触发：30Y 昨收 {us30y}% 创 2007 年 6 月以来新高 5.3307%，"
+            f"连续 30 个交易日站上 5%；长债遭系统性重估（多国 20Y 近 20 年高点），"
+            f"8/19 早间 -2.13bp 微跌未实质下行。数据快照 {today}：XAU ${xau} / DXY {dxy}。"
+        )
+    d["watch_signals"] = signals
+    return d
+
+
 def run(cmd, **kw):
     print("+", " ".join(cmd) if isinstance(cmd, list) else cmd)
     return subprocess.run(cmd, cwd=REPO_DIR, capture_output=True, **kw)
@@ -76,6 +126,8 @@ def main():
     ap.add_argument("--note", default=None, help="追加一条当日动态说明")
     ap.add_argument("--json", default=None, help='覆盖 live 字段，如 {"xau_usd":4460.1}')
     ap.add_argument("--message", default=None, help="自定义提交信息")
+    ap.add_argument("--signals-only", action="store_true", help="仅刷新 supports/watch_signals 字段（跳过实时抓取）")
+    ap.add_argument("--no-signals", action="store_true", help="跳过 supports/watch_signals 自动刷新")
     args = ap.parse_args()
 
     token = get_token()
@@ -88,6 +140,25 @@ def main():
     live = None
     d["meta"]["updated"] = today
     changed = False
+
+    # 仅刷新 signals 模式：跳过实时抓取，直接重写 supports/watch_signals 后提交
+    if args.signals_only:
+        refresh_supports_and_signals(d)
+        save(d)
+        msg = args.message or f"daily: 刷新 supports/watch_signals {today}"
+        run(["git", "config", "user.name", "csg-gold-bot"])
+        run(["git", "config", "user.email", "bot@csg-gold.local"])
+        remote = f"https://{token}@github.com/{REPO}.git"
+        run(["git", "remote", "set-url", "origin", remote])
+        run(["git", "add", "-A"])
+        st = run(["git", "status", "--porcelain"])
+        if not st.stdout.decode("utf-8", "ignore").strip():
+            print("无文件变更，已跳过推送。")
+            return
+        run(["git", "commit", "-m", msg])
+        run(["git", "push", "origin", "HEAD"])
+        print("已推送：", msg)
+        return
 
     # 1) 实时行情抓取（尽力而为）
     if args.json:
@@ -127,6 +198,11 @@ def main():
             else:
                 d["daily"].insert(0, entry)
             changed = True
+
+    # 3) 刷新 supports / watch_signals（关键节点）：从 live 动态拼 key 和 now
+    if not args.no_signals:
+        refresh_supports_and_signals(d)
+        changed = True
 
     save(d)
     if not changed:
