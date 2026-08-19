@@ -85,6 +85,7 @@ def main():
 
     d = load()
     today = bj_now().strftime("%Y-%m-%d")
+    live = None
     d["meta"]["updated"] = today
     changed = False
 
