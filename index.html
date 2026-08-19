@@ -569,7 +569,7 @@ function drawCandles(ctx, arr, type){
   const Y=v=>T+(hi-v)/(hi-lo)*H;
   const band=W/m, cw=Math.max(1,band*0.72);
   const upCol='#ff5c5c', dnCol='#23d18b';
-  klineState={pts,L,band,T,B,hi,lo,type,cv};
+  klineState={pts,L,band,T,B,hi,lo,type,cv:$('klineCanvas')};
 
   // 网格 + 右轴刻度
   ctx.lineWidth=1; ctx.textAlign='left';
@@ -644,7 +644,7 @@ function drawIntraday(ctx){
   const Y=v=>T+(hi-v)/(hi-lo)*H;
   const m=pts.length, band=(m>0)?W/m:1;
   const upCol='#ff5c5c', dnCol='#23d18b';
-  klineState={pts,L,band,T,B,hi,lo,type:'intraday',cv:null,prevClose};
+  klineState={pts,L,band,T,B,hi,lo,type:'intraday',cv:$('klineCanvas'),prevClose};
 
   // 网格 + 右轴
   ctx.lineWidth=1;
