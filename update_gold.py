@@ -16,7 +16,8 @@ csg-power-daily4 金价监测 · 每日更新提交脚本
 
 注意：Token 仅用于推送，不会被写入仓库任何文件。
 """
-import os, sys, json, subprocess, datetime, argparse, urllib.request
+import os, sys, json, subprocess, datetime, argparse, urllib.request, re
+from collections import OrderedDict
 
 REPO = "hxj0515/csg-power-daily4"
 REPO_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -117,6 +118,67 @@ def refresh_supports_and_signals(d):
     return d
 
 
+def fetch_sina_klines(d):
+    """拉取沪金主力 AU0 日K + 当日分钟线（新浪财经），本地聚合周K/月K。
+
+    写入 d['kline'] = {source, updated, au:{d,w,m}, intraday}
+    失败返回 False（保留旧数据）。AU0 为国内沪金主力连续合约，单位 元/克。
+    """
+    UA = {"User-Agent": "Mozilla/5.0", "Referer": "https://finance.sina.com.cn/"}
+
+    def fetch(url):
+        req = urllib.request.Request(url, headers=UA)
+        with urllib.request.urlopen(req, timeout=12) as r:
+            return r.read().decode("utf-8", "ignore")
+
+    def parse_sina_jsonp(txt):
+        m = re.search(r"var\s+_s=\(?(.*?)\)?;?\s*$", txt, re.S)
+        if not m:
+            return None
+        body = m.group(1).strip()
+        if body.endswith(";"):
+            body = body[:-1]
+        try:
+            return json.loads(body)
+        except Exception:
+            return None
+
+    def agg(daily, keyfn):
+        groups = OrderedDict()
+        for k in daily:
+            groups.setdefault(keyfn(k["d"]), []).append(k)
+        out = []
+        for ks in groups.values():
+            out.append({"d": ks[-1]["d"], "o": ks[0]["o"],
+                        "h": max(float(x["h"]) for x in ks),
+                        "l": min(float(x["l"]) for x in ks),
+                        "c": ks[-1]["c"],
+                        "v": sum(float(x["v"]) for x in ks)})
+        return out
+
+    try:
+        raw = fetch("https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_s=/InnerFuturesNewService.getDailyKLine?symbol=AU0")
+        daily = parse_sina_jsonp(raw) or []
+        if not daily:
+            print("WARN: AU0 日K 为空")
+            return False
+        weekly = agg(daily, lambda ds: datetime.date.fromisoformat(ds).isocalendar()[:2])
+        monthly = agg(daily, lambda ds: ds[:7])
+        raw2 = fetch("https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var%20_s=/InnerFuturesNewService.getMinLine?symbol=AU0")
+        minline = parse_sina_jsonp(raw2) or []
+        d["kline"] = {
+            "source": "新浪财经 AU0 沪金主力（元/克）· 周/月K由日K本地聚合",
+            "updated": bj_now().strftime("%Y-%m-%d %H:%M"),
+            "au": {"d": daily[-400:], "w": weekly[-160:], "m": monthly[-72:]},
+            "intraday": minline[-600:] if minline else [],
+        }
+        print(f"kline: 日K {len(d['kline']['au']['d'])} / 周K {len(d['kline']['au']['w'])} / 月K {len(d['kline']['au']['m'])} / 分时 {len(d['kline']['intraday'])}")
+        return True
+    except Exception as e:
+        print("WARN: kline 抓取失败:", e)
+        return False
+
+
 def run(cmd, **kw):
     print("+", " ".join(cmd) if isinstance(cmd, list) else cmd)
     return subprocess.run(cmd, cwd=REPO_DIR, capture_output=True, **kw)
@@ -128,6 +190,7 @@ def main():
     ap.add_argument("--message", default=None, help="自定义提交信息")
     ap.add_argument("--signals-only", action="store_true", help="仅刷新 supports/watch_signals 字段（跳过实时抓取）")
     ap.add_argument("--no-signals", action="store_true", help="跳过 supports/watch_signals 自动刷新")
+    ap.add_argument("--no-klines", action="store_true", help="跳过 K 线（分时/日/周/月）抓取")
     args = ap.parse_args()
 
     token = get_token()
@@ -144,6 +207,8 @@ def main():
     # 仅刷新 signals 模式：跳过实时抓取，直接重写 supports/watch_signals 后提交
     if args.signals_only:
         refresh_supports_and_signals(d)
+        if not args.no_klines:
+            fetch_sina_klines(d)
         save(d)
         msg = args.message or f"daily: 刷新 supports/watch_signals {today}"
         run(["git", "config", "user.name", "csg-gold-bot"])
@@ -203,6 +268,11 @@ def main():
     if not args.no_signals:
         refresh_supports_and_signals(d)
         changed = True
+
+    # 4) 刷新 K 线（沪金主力 AU0 分时/日K/周K/月K）
+    if not args.no_klines:
+        if fetch_sina_klines(d):
+            changed = True
 
     save(d)
     if not changed:
