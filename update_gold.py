@@ -219,8 +219,8 @@ def main():
             print("无文件变更，已跳过推送。")
             return
         run(["git", "commit", "-m", msg])
-        # 一次性 URL 推送：不把 token 写进 remote 配置，降低被 GitHub 吊销风险
-        run(["git", "push", f"https://x-access-token:{token}@github.com/{REPO}.git", "HEAD"])
+        # 一次性 URL 推送：不把 token 写进 remote 配置；禁用 credential helper 避免挂起
+        run(["git", "-c", "credential.helper=", "push", f"https://x-access-token:{token}@github.com/{REPO}.git", "HEAD"])
         print("已推送：", msg)
         return
 
@@ -286,8 +286,8 @@ def main():
         print("无文件变更，已跳过推送。")
         return
     run(["git", "commit", "-m", msg])
-    # 一次性 URL 推送：不把 token 写进 remote 配置，降低被 GitHub 吊销风险
-    run(["git", "push", f"https://x-access-token:{token}@github.com/{REPO}.git", "HEAD"])
+    # 一次性 URL 推送：不把 token 写进 remote 配置；禁用 credential helper 避免挂起
+    run(["git", "-c", "credential.helper=", "push", f"https://x-access-token:{token}@github.com/{REPO}.git", "HEAD"])
     print("已推送：", msg)
 
 if __name__ == "__main__":
