@@ -213,15 +213,14 @@ def main():
         msg = args.message or f"daily: 刷新 supports/watch_signals {today}"
         run(["git", "config", "user.name", "csg-gold-bot"])
         run(["git", "config", "user.email", "bot@csg-gold.local"])
-        remote = f"https://{token}@github.com/{REPO}.git"
-        run(["git", "remote", "set-url", "origin", remote])
         run(["git", "add", "-A"])
         st = run(["git", "status", "--porcelain"])
         if not st.stdout.decode("utf-8", "ignore").strip():
             print("无文件变更，已跳过推送。")
             return
         run(["git", "commit", "-m", msg])
-        run(["git", "push", "origin", "HEAD"])
+        # 一次性 URL 推送：不把 token 写进 remote 配置，降低被 GitHub 吊销风险
+        run(["git", "push", f"https://x-access-token:{token}@github.com/{REPO}.git", "HEAD"])
         print("已推送：", msg)
         return
 
@@ -281,15 +280,14 @@ def main():
     msg = args.message or f"daily: 金价监测 {today}"
     run(["git", "config", "user.name", "csg-gold-bot"])
     run(["git", "config", "user.email", "bot@csg-gold.local"])
-    remote = f"https://{token}@github.com/{REPO}.git"
-    run(["git", "remote", "set-url", "origin", remote])
     run(["git", "add", "-A"])
     st = run(["git", "status", "--porcelain"])
     if not st.stdout.decode("utf-8", "ignore").strip():
         print("无文件变更，已跳过推送。")
         return
     run(["git", "commit", "-m", msg])
-    run(["git", "push", "origin", "HEAD"])
+    # 一次性 URL 推送：不把 token 写进 remote 配置，降低被 GitHub 吊销风险
+    run(["git", "push", f"https://x-access-token:{token}@github.com/{REPO}.git", "HEAD"])
     print("已推送：", msg)
 
 if __name__ == "__main__":
