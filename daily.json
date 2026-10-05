@@ -2,7 +2,7 @@
   "meta": {
     "title": "金价监测 · csg-power-daily4",
     "site": "https://hxj0515.github.io/csg-power-daily4/",
-    "updated": "2026-10-04",
+    "updated": "2026-10-05",
     "source": "NeoData 金融数据服务 / Wind / 金投网 / 公开数据",
     "fx_note": "国际金折算元/克 = 伦敦金现(USD/oz) × 7.18 ÷ 31.1035（USD/CNY 7.18）",
     "article": "《金价从5598跌到3943又弹回4400，浮亏的你该慌还是该扛》慈慈大人 2026-08-17",
@@ -20,33 +20,33 @@
     }
   },
   "live": {
-    "xau_usd": 4143.1,
-    "prev_close": 4177.53,
-    "open": 4177.8,
-    "change_pct": -0.82,
+    "xau_usd": 4152.01,
+    "prev_close": 4143.1,
+    "open": 4140.98,
+    "change_pct": 0.22,
     "sh_gold_main": 905.02,
     "sh_gold_au9999": 898.44,
     "au9999_quote": 898.44,
     "au_td_quote": 901.6,
-    "dxy": 101.91,
+    "dxy": 101.9,
     "us2y": 4.82,
     "us10y": 5.27,
     "us30y": 5.63,
     "fed_funds": 3.88,
     "cpi_yoy": 3.4,
     "etf_tonnes": 4223.2,
-    "spdr_latest_tonnes": 1055.696,
+    "spdr_latest_tonnes": 1055.7,
     "cb_buy_q1": 244,
     "cb_buy_q2": 289,
     "fetched_at": "2026-10-04 08:20",
     "source": "金投网/Reuters/金十数据/汇通财经",
-    "high": 4226.59,
-    "low": 4125.26,
+    "high": 4153.13,
+    "low": 4132.69,
     "us5y": 5.13,
     "us20y": 5.69,
     "au9999": 898.44,
     "au_td": 901.6,
-    "spdr": 1055.696
+    "spdr": 1055.7
   },
   "supports": [
     {
@@ -3098,7 +3098,7 @@
   ],
   "kline": {
     "source": "新浪财经 AU0 沪金主力（元/克）· 周/月K由日K本地聚合",
-    "updated": "2026-10-04 08:25",
+    "updated": "2026-10-05 08:23",
     "au": {
       "d": [
         {
