@@ -338,11 +338,13 @@ function renderChart(){
 function renderLevels(){
   const s=D.meta.scenario,l=D.live||{};
   const last=(D.daily_series||[]).slice(-1)[0]||{};
-  const cnyNow=last.cny||null;
+  const cnyLive=(l.xau_usd?l.xau_usd*7.18/31.1035:null);
+  const cnyNow=cnyLive||last.cny||null;
   const cnyPeak=1246.5;
+  const rez=s.resistance||4225,supp=s.support||4105;
   const levels=[
-    {t:'4450 USD 压力位',v:'已突破（8/17 收 4473.70）',d:'折算约 1027 元/克；突破后 4450 由压力转为待确认支撑。',cls:'warn'},
-    {t:'4300 USD 支撑位',v:fmtNum(s.support),d:'折算约 993 元/克；底部抬高结构中关键防线。',cls:'down'},
+    {t:rez+' USD 阻力位',v:(l.xau_usd&&l.xau_usd>=rez?'已站上':'未突破')+'（现 '+(l.xau_usd?fmtNum(l.xau_usd):'—')+'）',d:'折算约 '+Math.round(rez*7.18/31.1035)+' 元/克；'+rez+' 为 10/9 盘中一周高位 4207.57 与 4200 整数关构成的反压带，突破需“美元走弱 + 加息预期降温”双配合。',cls:'warn'},
+    {t:supp+' USD 支撑位',v:'关键防线',d:'折算约 '+Math.round(supp*7.18/31.1035)+' 元/克；4105-4145 为本周反复夯实的低位支撑带（10/7 盘中低点 4066.30 已获逢低买盘承接），失守则看 4000 美元心理关口。',cls:'down'},
     {t:'今日折算价 vs 极端值',v:cnyNow?fmtNum(cnyNow)+' 元/克':'—',d:(()=>{if(!cnyNow)return '';return '较阶段低 923 元/克 +'+(cnyNow/923.3*100-100).toFixed(1)+'%，较阶段高 1247 元/克 仍 -'+(100-cnyNow/1246.5*100).toFixed(1)+'%。';})(),cls:'up'}
   ];
   $('levelCards').innerHTML=levels.map(x=>`<div class="card stat"><div class="l">${x.t}</div><div class="n ${x.cls}">${x.v}</div><div class="d">${x.d}</div></div>`).join('');
