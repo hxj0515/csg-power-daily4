@@ -184,8 +184,8 @@
   </section>
 
   <section id="verdict">
-    <h2>综合购入判断 <span class="tag">偏多配置（非追高）</span></h2>
-    <p class="lead">综合 19 位投资大师信号 + 文章三支撑/三信号 + 估值公平值 + 广东今日单价对比，给出的具体操作建议。</p>
+    <h2>综合购入判断 <span class="tag">中线偏多 · 短线不追高</span></h2>
+    <p class="lead">综合 19 位投资大师信号 + 文章三支撑/三信号 + 估值公平值 + 今日国内单价对比，给出的具体操作建议。</p>
     <div id="verdictCard"></div>
   </section>
 
@@ -203,7 +203,7 @@
 
   <section id="sectors">
     <h2>板块拆解 <span class="tag">文章五大板块</span></h2>
-    <p class="lead">从文章提炼的五大分析板块，已按 8/18 实时数据修正（4450 已突破）。</p>
+    <p class="lead">从文章提炼的五大分析板块，已按 10/13 实时数据修正（冲高回落，宽幅震荡 4154.6–4217）。</p>
     <div class="grid g3" id="sectorCards"></div>
   </section>
 
@@ -251,10 +251,11 @@ function renderMeta(){
 
 function renderLive(){
   const l=D.live||{};
+  const pct=v=>(v==null?'':(v>=0?'+':'')+v+'%');
   const cards=[
-    {n:'XAU/USD',v:fmtNum(l.xau_usd),l:'伦敦金 现货',d:'昨结 '+fmtNum(l.prev_close)+'（'+(l.change_pct!=null?l.change_pct+'%':'')+'）',cls:l.change_pct<0?'down':'up'},
-    {n:'沪金主力',v:fmtNum(l.sh_gold_main),l:'元/克 · AU2610',d:'上海金现 '+fmtNum(l.sh_gold_au9999),cls:'up'},
-    {n:'美元指数',v:fmtNum(l.dxy),l:'DXY',d:'20 日 -1.58% 走弱',cls:l.dxy&&l.dxy<100?'down':'up'},
+    {n:'XAU/USD',v:fmtNum(l.xau_usd),l:'伦敦金 现货',d:'昨结 '+fmtNum(l.prev_close)+'（'+(l.change_pct!=null?l.change_pct+'%':'')+'）',cls:(l.change_pct||0)<0?'down':'up'},
+    {n:'沪金主力',v:fmtNum(l.sh_gold_main),l:'元/克 · 沪金主连',d:'上金所金现 '+fmtNum(l.sh_gold_au9999)+(l.sh_gold_main_chg!=null?'（'+pct(l.sh_gold_main_chg)+'）':''),cls:(l.sh_gold_main_chg||0)<0?'down':'up'},
+    {n:'美元指数',v:fmtNum(l.dxy),l:'DXY',d:(l.dxy_chg!=null?pct(l.dxy_chg)+' · 四连涨延续':'DXY'),cls:(l.dxy_chg!=null?l.dxy_chg:0)>=0?'up':'down'},
     {n:'美债 30Y',v:l.us30y!=null?l.us30y.toFixed(2)+'%':'—',l:'长端收益率',d:'10Y '+fmtNum(l.us10y)+'% · 2Y '+fmtNum(l.us2y)+'%',cls:'warn'}
   ];
   $('liveCards').innerHTML=cards.map(c=>`<div class="card stat"><div class="l">${c.l}</div><div class="n ${c.cls}">${c.v}</div><div class="d">${c.d}</div></div>`).join('');
@@ -332,20 +333,21 @@ function renderChart(){
   svg+=`<text x="40" y="245" fill="#6b7c8d" font-size="10">${series[0].date}</text>`;
   svg+=`<text x="660" y="245" fill="#6b7c8d" font-size="10" text-anchor="end">${last.date}</text>`;
   $('priceChart').innerHTML=svg;
-  $('chartNote').textContent='折算口径：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8/15/8/17/8/18 实时点位。横向虚线为今日广东各渠道零售/基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29），文章文章高点 5598 USD（盘中）已超出 Wind 收盘序列；故用 Wind 收盘序列作为基线。';
+  $('chartNote').textContent='折算口径（图表统一基准）：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克（固定口径以保证跨期可比；按实时汇率的折算价见「情景位」卡）。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8 月以来按日追加实时点位至 10/13。横向虚线为国内基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29）为收盘序列；文章高点 5598 USD（盘中）已超出现货收盘序列，故以 Wind 收盘序列为基线。';
 }
 
 function renderLevels(){
   const s=D.meta.scenario,l=D.live||{};
   const last=(D.daily_series||[]).slice(-1)[0]||{};
-  const cnyLive=(l.xau_usd?l.xau_usd*7.18/31.1035:null);
+  const fx=l.usd_cny||7.18;
+  const cnyLive=(l.xau_usd?l.xau_usd*fx/31.10348:null);
+  const cny718=(l.xau_usd?l.xau_usd*7.18/31.10348:null);
   const cnyNow=cnyLive||last.cny||null;
-  const cnyPeak=1246.5;
-  const rez=s.resistance||4225,supp=s.support||4105;
+  const rez=s.resistance||4185,supp=s.support||4153;
   const levels=[
-    {t:rez+' USD 阻力位',v:(l.xau_usd&&l.xau_usd>=rez?'已站上':'未突破')+'（现 '+(l.xau_usd?fmtNum(l.xau_usd):'—')+'）',d:'折算约 '+Math.round(rez*7.18/31.1035)+' 元/克；'+rez+' 为 10/9 盘中一周高位 4207.57 与 4200 整数关构成的反压带，突破需“美元走弱 + 加息预期降温”双配合。',cls:'warn'},
-    {t:supp+' USD 支撑位',v:'关键防线',d:'折算约 '+Math.round(supp*7.18/31.1035)+' 元/克；4105-4145 为本周反复夯实的低位支撑带（10/7 盘中低点 4066.30 已获逢低买盘承接），失守则看 4000 美元心理关口。',cls:'down'},
-    {t:'今日折算价 vs 极端值',v:cnyNow?fmtNum(cnyNow)+' 元/克':'—',d:(()=>{if(!cnyNow)return '';return '较阶段低 923 元/克 +'+(cnyNow/923.3*100-100).toFixed(1)+'%，较阶段高 1247 元/克 仍 -'+(100-cnyNow/1246.5*100).toFixed(1)+'%。';})(),cls:'up'}
+    {t:rez+' USD 阻力位',v:(l.xau_usd&&l.xau_usd>=rez?'已站上':'未突破')+'（现 '+(l.xau_usd?fmtNum(l.xau_usd):'—')+'）',d:'折算约 '+Math.round(rez*fx/31.10348)+' 元/克（实时汇率 '+fx+'）；'+rez+' 为 4154.6–4217 波段 0.5 中轴 4185.8 与 5/10 日均线 4183–4188 重合的强反压带，其上是 4193（0.618）与 4200–4217（整数关 + 10/12 日内高点 4217.06）；站稳 4232 方视为反弹升级，突破需“美元走弱 + 加息预期降温”配合。',cls:'warn'},
+    {t:supp+' USD 支撑位',v:'关键防线',d:'折算约 '+Math.round(supp*fx/31.10348)+' 元/克；4153 由 10/12 日内低点 4154.60 与 20 日均线 4157 共同构成，失守看 4143/4127/4113，再破 4068（8/25 以来回撤低点区）则测试 4000 美元心理关口。',cls:'down'},
+    {t:'今日折算价 vs 极端值',v:cnyNow?fmtNum(cnyNow)+' 元/克':'—',d:(()=>{if(!cnyNow)return '';return '按 10/13 实时汇率 '+fx+' 折算（与上金所 Au9999 '+(l.sh_gold_au9999??'—')+' 元/克 互验吻合）；图表统一 7.18 口径为 '+fmtNum(cny718)+' 元/克，较阶段低 923 元/克 +'+(cny718/923.3*100-100).toFixed(1)+'%，较阶段高 1247 元/克 仍 -'+(100-cny718/1246.5*100).toFixed(1)+'%。';})(),cls:'up'}
   ];
   $('levelCards').innerHTML=levels.map(x=>`<div class="card stat"><div class="l">${x.t}</div><div class="n ${x.cls}">${x.v}</div><div class="d">${x.d}</div></div>`).join('');
 }
@@ -423,7 +425,7 @@ function renderVerdict(){
       </div>
     </div>
     <div class="card" style="margin-top:12px">
-      <h3 class="gold">今日广东单价带（决策参考）</h3>
+      <h3 class="gold">今日国内单价带（决策参考）</h3>
       <div class="kv">${pbRows}</div>
     </div>
     <div class="card" style="margin-top:12px">
