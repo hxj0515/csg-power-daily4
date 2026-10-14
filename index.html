@@ -203,7 +203,7 @@
 
   <section id="sectors">
     <h2>板块拆解 <span class="tag">文章五大板块</span></h2>
-    <p class="lead">从文章提炼的五大分析板块，已按 10/13 实时数据修正（冲高回落，宽幅震荡 4154.6–4217）。</p>
+    <p class="lead">从文章提炼的五大分析板块，已按 10/14 实时数据修正（连续两日收阴，失守 4150 整数关，宽幅震荡 4150–4200）。</p>
     <div class="grid g3" id="sectorCards"></div>
   </section>
 
@@ -255,11 +255,11 @@ function renderLive(){
   const cards=[
     {n:'XAU/USD',v:fmtNum(l.xau_usd),l:'伦敦金 现货',d:'昨结 '+fmtNum(l.prev_close)+'（'+(l.change_pct!=null?l.change_pct+'%':'')+'）',cls:(l.change_pct||0)<0?'down':'up'},
     {n:'沪金主力',v:fmtNum(l.sh_gold_main),l:'元/克 · 沪金主连',d:'上金所金现 '+fmtNum(l.sh_gold_au9999)+(l.sh_gold_main_chg!=null?'（'+pct(l.sh_gold_main_chg)+'）':''),cls:(l.sh_gold_main_chg||0)<0?'down':'up'},
-    {n:'美元指数',v:fmtNum(l.dxy),l:'DXY',d:(l.dxy_chg!=null?pct(l.dxy_chg)+' · 四连涨延续':'DXY'),cls:(l.dxy_chg!=null?l.dxy_chg:0)>=0?'up':'down'},
+    {n:'美元指数',v:fmtNum(l.dxy),l:'DXY',d:(l.dxy_chg!=null?pct(l.dxy_chg)+(l.dxy_chg<0?' · 自 18 个月高点回落':' · 高位延续'):'DXY'),cls:(l.dxy_chg!=null?l.dxy_chg:0)>=0?'up':'down'},
     {n:'美债 30Y',v:l.us30y!=null?l.us30y.toFixed(2)+'%':'—',l:'长端收益率',d:'10Y '+fmtNum(l.us10y)+'% · 2Y '+fmtNum(l.us2y)+'%',cls:'warn'}
   ];
   $('liveCards').innerHTML=cards.map(c=>`<div class="card stat"><div class="l">${c.l}</div><div class="n ${c.cls}">${c.v}</div><div class="d">${c.d}</div></div>`).join('');
-  $('liveNote').textContent='快照：'+l.fetched_at+' · '+l.source+' · 三信号：ETF 未过热 / 央行购金未减速 / 30Y 未回落（均未触发看空）。';
+  $('liveNote').textContent='快照：'+l.fetched_at+' · '+l.source+' · '+(l.signals_note||'三信号：ETF / 央行购金 / 30Y 详见下方「三大观察信号」。');
 }
 
 function renderChart(){
@@ -333,7 +333,7 @@ function renderChart(){
   svg+=`<text x="40" y="245" fill="#6b7c8d" font-size="10">${series[0].date}</text>`;
   svg+=`<text x="660" y="245" fill="#6b7c8d" font-size="10" text-anchor="end">${last.date}</text>`;
   $('priceChart').innerHTML=svg;
-  $('chartNote').textContent='折算口径（图表统一基准）：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克（固定口径以保证跨期可比；按实时汇率的折算价见「情景位」卡）。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8 月以来按日追加实时点位至 10/13。横向虚线为国内基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29）为收盘序列；文章高点 5598 USD（盘中）已超出现货收盘序列，故以 Wind 收盘序列为基线。';
+  $('chartNote').textContent='折算口径（图表统一基准）：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克（固定口径以保证跨期可比；按实时汇率的折算价见「情景位」卡）。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8 月以来按日追加实时点位至 10/14。横向虚线为国内基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29）为收盘序列；文章高点 5598 USD（盘中）已超出现货收盘序列，故以 Wind 收盘序列为基线。';
 }
 
 function renderLevels(){
@@ -343,11 +343,12 @@ function renderLevels(){
   const cnyLive=(l.xau_usd?l.xau_usd*fx/31.10348:null);
   const cny718=(l.xau_usd?l.xau_usd*7.18/31.10348:null);
   const cnyNow=cnyLive||last.cny||null;
-  const rez=s.resistance||4185,supp=s.support||4153;
+  const rez=s.resistance||4200,supp=s.support||4150;
+  const fxDate=String(D.meta.updated||'').slice(5).replace('-','/');
   const levels=[
-    {t:rez+' USD 阻力位',v:(l.xau_usd&&l.xau_usd>=rez?'已站上':'未突破')+'（现 '+(l.xau_usd?fmtNum(l.xau_usd):'—')+'）',d:'折算约 '+Math.round(rez*fx/31.10348)+' 元/克（实时汇率 '+fx+'）；'+rez+' 为 4154.6–4217 波段 0.5 中轴 4185.8 与 5/10 日均线 4183–4188 重合的强反压带，其上是 4193（0.618）与 4200–4217（整数关 + 10/12 日内高点 4217.06）；站稳 4232 方视为反弹升级，突破需“美元走弱 + 加息预期降温”配合。',cls:'warn'},
-    {t:supp+' USD 支撑位',v:'关键防线',d:'折算约 '+Math.round(supp*fx/31.10348)+' 元/克；4153 由 10/12 日内低点 4154.60 与 20 日均线 4157 共同构成，失守看 4143/4127/4113，再破 4068（8/25 以来回撤低点区）则测试 4000 美元心理关口。',cls:'down'},
-    {t:'今日折算价 vs 极端值',v:cnyNow?fmtNum(cnyNow)+' 元/克':'—',d:(()=>{if(!cnyNow)return '';return '按 10/13 实时汇率 '+fx+' 折算（与上金所 Au9999 '+(l.sh_gold_au9999??'—')+' 元/克 互验吻合）；图表统一 7.18 口径为 '+fmtNum(cny718)+' 元/克，较阶段低 923 元/克 +'+(cny718/923.3*100-100).toFixed(1)+'%，较阶段高 1247 元/克 仍 -'+(100-cny718/1246.5*100).toFixed(1)+'%。';})(),cls:'up'}
+    {t:rez+' USD 阻力位',v:(l.xau_usd&&l.xau_usd>=rez?'已站上':'未突破')+'（现 '+(l.xau_usd?fmtNum(l.xau_usd):'—')+'）',d:'折算约 '+Math.round(rez*fx/31.10348)+' 元/克（实时汇率 '+fx+'）；'+(s.resistance_note||''),cls:'warn'},
+    {t:supp+' USD 支撑位',v:'关键防线',d:'折算约 '+Math.round(supp*fx/31.10348)+' 元/克；'+(s.support_note||''),cls:'down'},
+    {t:'今日折算价 vs 极端值',v:cnyNow?fmtNum(cnyNow)+' 元/克':'—',d:(()=>{if(!cnyNow)return '';return '按 '+fxDate+' 实时汇率 '+fx+' 折算（与上金所 Au9999 '+(l.sh_gold_au9999??'—')+' 元/克 互验吻合）；图表统一 7.18 口径为 '+fmtNum(cny718)+' 元/克，较阶段低 923 元/克 +'+(cny718/923.3*100-100).toFixed(1)+'%，较阶段高 1247 元/克 仍 -'+(100-cny718/1246.5*100).toFixed(1)+'%。';})(),cls:'up'}
   ];
   $('levelCards').innerHTML=levels.map(x=>`<div class="card stat"><div class="l">${x.t}</div><div class="n ${x.cls}">${x.v}</div><div class="d">${x.d}</div></div>`).join('');
 }
@@ -475,13 +476,13 @@ function renderMasters(){
     const cls=signalClass(m.signal);
     return `<tr><td><b>${esc(m.name)}</b><div style="color:var(--muted);font-size:11.5px">${esc(m.role||'')}</div></td><td><span class="signal ${cls}">${signalZh(m.signal)}</span></td><td style="white-space:nowrap">${conf}%<div class="confbar"><i style="width:${conf}%;background:${cls==='sgn-bull'?'var(--up)':cls==='sgn-bear'?'var(--down)':'var(--warn)'}"></i></div></td><td>${esc(m.reason||'')}</td></tr>`;
   }).join('');
-  $('mastersTbl').innerHTML='<caption>19 位投资大师独立信号（已归位 7/19；圆桌进行中，最终信号以全员归位为准）</caption><thead><tr><th>大师 / 分析师</th><th>信号</th><th>信心</th><th>核心理由（一句话）</th></tr></thead><tbody>'+rows+'</tbody>';
+  $('mastersTbl').innerHTML='<caption>19 位投资大师独立信号（已归位 '+ms.length+'/19；圆桌进行中，最终信号以全员归位为准）</caption><thead><tr><th>大师 / 分析师</th><th>信号</th><th>信心</th><th>核心理由（一句话）</th></tr></thead><tbody>'+rows+'</tbody>';
   const bulls=ms.filter(m=>signalZh(m.signal)==='看多').sort((a,b)=>Number(b.confidence||0)-Number(a.confidence||0));
   const bears=ms.filter(m=>signalZh(m.signal)==='看空').sort((a,b)=>Number(b.confidence||0)-Number(a.confidence||0));
   let html='<div class="grid g2" style="margin-top:14px">';
   if(bulls.length) html+=`<div class="card"><h3 class="up">最看多：${esc(bulls[0].name)}（${bulls[0].confidence}%）</h3><p>${esc(bulls[0].reason)}</p></div>`;
   if(bears.length) html+=`<div class="card"><h3 class="down">最看空：${esc(bears[0].name)}（${bears[0].confidence}%）</h3><p>${esc(bears[0].reason)}</p></div>`;
-  if(!bears.length) html+=`<div class="card"><h3 class="warn">最看空：暂无</h3><p>当前已归位的 ${ms.length} 位大师清一色偏多，无看空信号（其余 12 位仍在后台）。</p></div>`;
+  if(!bears.length) html+=`<div class="card"><h3 class="warn">最看空：暂无</h3><p>当前已归位的 ${ms.length} 位大师清一色偏多，无看空信号（其余 ${19-ms.length} 位仍在后台）。</p></div>`;
   html+='</div>';
   $('philosophyConflict').innerHTML=html;
 }
