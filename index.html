@@ -203,7 +203,7 @@
 
   <section id="sectors">
     <h2>板块拆解 <span class="tag">文章五大板块</span></h2>
-    <p class="lead">从文章提炼的五大分析板块，已按 10/15 实时数据修正（连续三日收阴，击穿 4150 震荡区下沿、低见 4073.35，区间下移至 4073–4150）。</p>
+    <p class="lead">从文章提炼的五大分析板块，已按 10/16 实时数据修正（10/15 反弹 1.56% 收复 4150 分水岭、收 4169.33，当前围绕 4150–4185 区间拉锯）。</p>
     <div class="grid g3" id="sectorCards"></div>
   </section>
 
@@ -333,7 +333,7 @@ function renderChart(){
   svg+=`<text x="40" y="245" fill="#6b7c8d" font-size="10">${series[0].date}</text>`;
   svg+=`<text x="660" y="245" fill="#6b7c8d" font-size="10" text-anchor="end">${last.date}</text>`;
   $('priceChart').innerHTML=svg;
-  $('chartNote').textContent='折算口径（图表统一基准）：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克（固定口径以保证跨期可比；按实时汇率的折算价见「情景位」卡）。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8 月以来按日追加实时点位至 10/15。横向虚线为国内基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29）为收盘序列；文章高点 5598 USD（盘中）已超出现货收盘序列，故以 Wind 收盘序列为基线。';
+  $('chartNote').textContent='折算口径（图表统一基准）：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克（固定口径以保证跨期可比；按实时汇率的折算价见「情景位」卡）。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8 月以来按日追加实时点位至 10/16。横向虚线为国内基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29）为收盘序列；文章高点 5598 USD（盘中）已超出现货收盘序列，故以 Wind 收盘序列为基线。';
 }
 
 function renderLevels(){
