@@ -184,7 +184,7 @@
   </section>
 
   <section id="verdict">
-    <h2>综合购入判断 <span class="tag">区间震荡 · 4150–4200 箱体未破</span></h2>
+    <h2>综合购入判断 <span class="tag">区间震荡 · 4110–4170 箱体 · 阻力 4200 / 支撑 4130</span></h2>
     <p class="lead">综合 19 位投资大师信号 + 文章三支撑/三信号 + 估值公平值 + 今日国内单价对比，给出的具体操作建议。</p>
     <div id="verdictCard"></div>
   </section>
@@ -203,7 +203,7 @@
 
   <section id="sectors">
     <h2>板块拆解 <span class="tag">文章五大板块</span></h2>
-    <p class="lead">从文章提炼的五大分析板块，已按 10/17（周六）最新数据修正（周五收 4165.40、跌 0.13%，日内 4146.70–4198.64；4150–4200 箱体未破，阻力 4200 / 支撑 4150；沃什曼谷讲话后 10 月加息概率降至 15% 以下）。</p>
+    <p class="lead">从文章提炼的五大分析板块，已按 10/18（周日休市）最新数据修正（周五收 4165.40、跌 0.13%，周跌约 0.7%，日内 4146.70–4198.64；4110–4170 核心箱体、收于上沿，阻力 4200（近端 4185）/ 支撑 4130（箱体下沿 4110）；SPDR 10/16 增 5.13 吨至 1059.04 吨，CME 10 月维持不变 84.5%；周末霍尔木兹海峡升级为开火拦截，周一跳空风险双向）。</p>
     <div class="grid g3" id="sectorCards"></div>
   </section>
 
@@ -333,7 +333,7 @@ function renderChart(){
   svg+=`<text x="40" y="245" fill="#6b7c8d" font-size="10">${series[0].date}</text>`;
   svg+=`<text x="660" y="245" fill="#6b7c8d" font-size="10" text-anchor="end">${last.date}</text>`;
   $('priceChart').innerHTML=svg;
-  $('chartNote').textContent='折算口径（图表统一基准）：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克（固定口径以保证跨期可比；按实时汇率的折算价见「情景位」卡）。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8 月以来按日追加实时点位至 10/17。横向虚线为国内基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29）为收盘序列；文章高点 5598 USD（盘中）已超出现货收盘序列，故以 Wind 收盘序列为基线。';
+  $('chartNote').textContent='折算口径（图表统一基准）：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克（固定口径以保证跨期可比；按实时汇率的折算价见「情景位」卡）。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8 月以来按日追加实时点位至 10/18（周末无成交，沿用周五收盘）。横向虚线为国内基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29）为收盘序列；文章高点 5598 USD（盘中）已超出现货收盘序列，故以 Wind 收盘序列为基线。';
 }
 
 function renderLevels(){
@@ -343,7 +343,7 @@ function renderLevels(){
   const cnyLive=(l.xau_usd?l.xau_usd*fx/31.10348:null);
   const cny718=(l.xau_usd?l.xau_usd*7.18/31.10348:null);
   const cnyNow=cnyLive||last.cny||null;
-  const rez=s.resistance||4200,supp=s.support||4150;
+  const rez=s.resistance||4200,supp=s.support||4130;
   const fxDate=String(D.meta.updated||'').slice(5).replace('-','/');
   const levels=[
     {t:rez+' USD 阻力位',v:(l.xau_usd&&l.xau_usd>=rez?'已站上':'未突破')+'（现 '+(l.xau_usd?fmtNum(l.xau_usd):'—')+'）',d:'折算约 '+Math.round(rez*fx/31.10348)+' 元/克（实时汇率 '+fx+'）；'+(s.resistance_note||''),cls:'warn'},
