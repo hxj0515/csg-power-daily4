@@ -184,7 +184,7 @@
   </section>
 
   <section id="verdict">
-    <h2>综合购入判断 <span class="tag">区间拉锯 · 4147–4199 箱体 · 阻力 4200 / 支撑 4150</span></h2>
+    <h2>综合购入判断 <span class="tag">震荡偏弱 · 4111–4150 区间 · 阻力 4150 / 支撑 4103</span></h2>
     <p class="lead">综合 19 位投资大师信号 + 文章三支撑/三信号 + 估值公平值 + 今日国内单价对比，给出的具体操作建议。</p>
     <div id="verdictCard"></div>
   </section>
@@ -203,7 +203,7 @@
 
   <section id="sectors">
     <h2>板块拆解 <span class="tag">文章五大板块</span></h2>
-    <p class="lead">从文章提炼的五大分析板块，已按 10/19（周一亚市）最新数据修正（亚市 4182.85、+0.42%，跳空低开后 V 形拉回，日内 4156.53–4187.57；上周五收 4165.18、跌 0.13%，周跌 0.68%；4147–4199 箱体拉锯，阻力 4200（近端 4185–4190）/ 支撑 4150（次级 4130、箱体下沿 4110–4115）；SPDR 10/16 增 5.13 吨至 1059.04 吨，CME 10 月维持不变 83.9%、12 月 ≥25bp 合计约 91.8%；特朗普豁免部分对俄制裁关税使油价跳水，WTI 98.13、布伦特 108.69，加息压力暂缓）。</p>
+    <p class="lead">从文章提炼的五大分析板块，已按 10/21（周三亚市）最新数据修正（亚市 4119.09、-0.14%，连续第四日收于 4150 下方，日内 4111.97–4131.79；10/20 收 4125.08、跌 0.37%，美盘冲 4155 后回吐；区间由 4147–4199 下移至 4111–4150，阻力 4150（近端 4145–4157，次级 4161/4174–4187）/ 支撑 4103（近端 4111，次级 4100/4080/4066–4073）；SPDR 10/20 增 1.711 吨至 1060.183 吨创 10 月新高，10Y 美债 5.1126%、30Y 5.4220%、10Y TIPS 2.7512%，CME 10 月维持不变 83.9%、12 月至少加息一次约 90.2%；布伦特触 111.94 创 5 月以来新高后回落至 108.79，WTI 97.88）。</p>
     <div class="grid g3" id="sectorCards"></div>
   </section>
 
@@ -333,7 +333,7 @@ function renderChart(){
   svg+=`<text x="40" y="245" fill="#6b7c8d" font-size="10">${series[0].date}</text>`;
   svg+=`<text x="660" y="245" fill="#6b7c8d" font-size="10" text-anchor="end">${last.date}</text>`;
   $('priceChart').innerHTML=svg;
-  $('chartNote').textContent='折算口径（图表统一基准）：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克（固定口径以保证跨期可比；按实时汇率的折算价见「情景位」卡）。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8 月以来按日追加实时点位至 10/19（亚市 4182.85，按 7.18 口径 965.5 元/克）。横向虚线为国内基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29）为收盘序列；文章高点 5598 USD（盘中）已超出现货收盘序列，故以 Wind 收盘序列为基线。';
+  $('chartNote').textContent='折算口径（图表统一基准）：伦敦金现（USD/oz）× USD/CNY 7.18 ÷ 31.1035 = 元/克（固定口径以保证跨期可比；按实时汇率的折算价见「情景位」卡）。来源：Wind 伦敦金现 IDC（1/5–7/29 共 40 个数据点）+ 8 月以来按日追加实时点位至 10/21（亚市 4119.09，按 7.18 口径 950.9 元/克）。横向虚线为国内基准/估值参考水平。注：Wind 阶段高 5400 USD（1/29）为收盘序列；文章高点 5598 USD（盘中）已超出现货收盘序列，故以 Wind 收盘序列为基线。';
 }
 
 function renderLevels(){
@@ -343,7 +343,7 @@ function renderLevels(){
   const cnyLive=(l.xau_usd?l.xau_usd*fx/31.10348:null);
   const cny718=(l.xau_usd?l.xau_usd*7.18/31.10348:null);
   const cnyNow=cnyLive||last.cny||null;
-  const rez=s.resistance||4200,supp=s.support||4150;
+  const rez=s.resistance||4150,supp=s.support||4103;
   const fxDate=String(D.meta.updated||'').slice(5).replace('-','/');
   const levels=[
     {t:rez+' USD 阻力位',v:(l.xau_usd&&l.xau_usd>=rez?'已站上':'未突破')+'（现 '+(l.xau_usd?fmtNum(l.xau_usd):'—')+'）',d:'折算约 '+Math.round(rez*fx/31.10348)+' 元/克（实时汇率 '+fx+'）；'+(s.resistance_note||''),cls:'warn'},
